@@ -146,7 +146,7 @@ async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
     ? `${window.location.origin}/imgly/`
     : cdnPublicPath;
 
-  // For 'small', use local publicPath (isnet_quint8 is bundled locally)
+  // For 'small', use localPublicPath (isnet_quint8 is bundled locally for instant 0ms startup)
   // For 'medium' (Studio HD FP16), staticimgly.com CDN delivers weights with zero CORS restrictions
   const chosenPublicPath = (modelTier === 'small') ? localPublicPath : cdnPublicPath;
 
