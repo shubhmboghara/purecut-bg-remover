@@ -98,13 +98,13 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
         
         {/* Top 3D Floating Pill Badge */}
         <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-studio-900/85 border border-studio-borderHighlight backdrop-blur-xl mb-6 shadow-glow transition transform hover:scale-105">
-          <Box className="w-4 h-4 text-brand-400 animate-spin-slow" />
+          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
           <span className="text-xs font-bold text-white tracking-wide">
-            3D Spatial AI Studio v2.0
+            100% Result & Native Resolution Guarantee
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse"></span>
           <span className="text-[11px] text-accent-emerald font-bold tracking-wide">
-            100% In-Browser Private
+            Sub-Pixel Edge Matting
           </span>
         </div>
 

@@ -35,6 +35,7 @@ export default function CanvasViewport({
   const [zoom, setZoom] = useState(1.0);
   const [compareActive, setCompareActive] = useState(false);
   const [threeSpatialActive, setThreeSpatialActive] = useState(false);
+  const [inspectBackdrop, setInspectBackdrop] = useState('checkerboard'); // 'checkerboard' | 'white' | 'black' | 'green'
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
 
@@ -284,6 +285,58 @@ export default function CanvasViewport({
         </div>
       )}
 
+      {/* Edge Halo Quality Inspector Floating Bar */}
+      <div className="absolute top-5 right-5 z-35 flex items-center gap-2 p-1.5 rounded-2xl bg-studio-900/90 backdrop-blur-xl border border-studio-borderHighlight shadow-xl">
+        <span className="text-[11px] font-bold text-slate-300 px-1.5 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+          <span>Edge Check:</span>
+        </span>
+        <button
+          onClick={() => setInspectBackdrop('checkerboard')}
+          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+            inspectBackdrop === 'checkerboard'
+              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
+              : 'border-white/20 opacity-70 hover:opacity-100'
+          }`}
+          title="Transparent Checkerboard"
+        >
+          <span className="w-4 h-4 rounded-sm checkerboard-bg inline-block"></span>
+        </button>
+        <button
+          onClick={() => setInspectBackdrop('white')}
+          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+            inspectBackdrop === 'white'
+              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
+              : 'border-white/20 opacity-70 hover:opacity-100'
+          }`}
+          title="Pure White #FFFFFF (Inspect for dark halos)"
+        >
+          <span className="w-4 h-4 rounded-sm bg-white inline-block"></span>
+        </button>
+        <button
+          onClick={() => setInspectBackdrop('black')}
+          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+            inspectBackdrop === 'black'
+              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
+              : 'border-white/20 opacity-70 hover:opacity-100'
+          }`}
+          title="Pitch Black #000000 (Inspect for white outlines)"
+        >
+          <span className="w-4 h-4 rounded-sm bg-black inline-block"></span>
+        </button>
+        <button
+          onClick={() => setInspectBackdrop('green')}
+          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+            inspectBackdrop === 'green'
+              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
+              : 'border-white/20 opacity-70 hover:opacity-100'
+          }`}
+          title="Chroma Green #00FF00 (Chroma key edge inspection)"
+        >
+          <span className="w-4 h-4 rounded-sm bg-[#00ff00] inline-block"></span>
+        </button>
+      </div>
+
       {/* 3D Spatial Canvas Viewport Frame */}
       <div
         ref={wrapperRef}
@@ -294,7 +347,15 @@ export default function CanvasViewport({
             ? (activeTool === 'wand' || activeTool === 'lasso' ? 'crosshair' : 'crosshair') 
             : 'grab'
         }}
-        className="relative rounded-3xl overflow-hidden checkerboard-bg transition-transform duration-75 origin-center border-2 border-white/10 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
+        className={`relative rounded-3xl overflow-hidden transition-all duration-150 origin-center border-2 border-white/10 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] ${
+          inspectBackdrop === 'white'
+            ? 'bg-white'
+            : inspectBackdrop === 'black'
+            ? 'bg-black'
+            : inspectBackdrop === 'green'
+            ? 'bg-[#00ff00]'
+            : 'checkerboard-bg'
+        }`}
       >
         <canvas ref={canvasRefs.bg} className="absolute inset-0 z-10" />
         <canvas ref={canvasRefs.shadow} className="absolute inset-0 z-15" />
@@ -352,6 +413,18 @@ export default function CanvasViewport({
             aria-label="Fit canvas to screen"
           >
             <Maximize className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setZoom(1.0)}
+            className={`px-2 py-1 rounded-xl text-[11px] font-bold transition ml-0.5 keycap-3d ${
+              Math.abs(zoom - 1.0) < 0.05
+                ? 'bg-brand-500 text-white shadow-glow'
+                : 'text-slate-300 hover:text-white hover:bg-studio-800'
+            }`}
+            title="100% 1:1 Pixel Scale (Native Resident Inspection)"
+            aria-label="100% 1:1 pixel scale"
+          >
+            100%
           </button>
         </div>
 

@@ -27,7 +27,9 @@ import {
   applyPurgeFloorShadows,
   applyCleanStrayIslands,
   applyAlphaThreshold,
-  applyInvertMask
+  applyInvertMask,
+  applyColorDespill,
+  apply100PercentAutoPerfect
 } from './services/smartMaskTools';
 
 export default function App() {
@@ -573,6 +575,36 @@ export default function App() {
     renderAll();
   }, [renderAll]);
 
+  // 1-Click 100% Auto-Perfect Handler
+  const handleAutoPerfect100 = useCallback(() => {
+    if (!maskCanvasRef.current) return;
+    const modified = apply100PercentAutoPerfect(
+      maskCanvasRef.current,
+      originalImageRef.current,
+      { cleanIslands: true, purgeShadows: true, despill: true, chokeHalos: true }
+    );
+    if (modified) {
+      pushHistory();
+      renderAll();
+      showToast('✨ 100% Auto-Perfect applied: Halos defringed, specks purged & shadows cleaned!');
+    } else {
+      showToast('Cutout is already 100% crisp and clean!');
+    }
+  }, [pushHistory, renderAll, showToast]);
+
+  // Neutralize Color Spill (Despill) Handler
+  const handleColorDespill = useCallback(() => {
+    if (!maskCanvasRef.current) return;
+    const modified = applyColorDespill(maskCanvasRef.current, originalImageRef.current, 0.85);
+    if (modified) {
+      pushHistory();
+      renderAll();
+      showToast('Color spill & background tint neutralized!');
+    } else {
+      showToast('No prominent edge color spill detected');
+    }
+  }, [pushHistory, renderAll, showToast]);
+
   // Auto Purge Floor & Contact Shadows
   const handlePurgeFloorShadows = useCallback(() => {
     if (!maskCanvasRef.current) return;
@@ -748,6 +780,8 @@ export default function App() {
                   refine={refine}
                   onChangeRefine={setRefine}
                   onApplyRefine={handleApplyRefine}
+                  onAutoPerfect100={handleAutoPerfect100}
+                  onColorDespill={handleColorDespill}
                   onPurgeFloorShadows={handlePurgeFloorShadows}
                   onCleanStrayIslands={handleCleanStrayIslands}
                   onDefringeEdges={handleDefringeEdges}

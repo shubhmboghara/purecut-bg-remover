@@ -27,6 +27,8 @@ export default function RetouchPanel({
   refine,
   onChangeRefine,
   onApplyRefine,
+  onAutoPerfect100,
+  onColorDespill,
   onPurgeFloorShadows,
   onCleanStrayIslands,
   onDefringeEdges,
@@ -296,6 +298,28 @@ export default function RetouchPanel({
                 Contracts edge inwards to completely eliminate light outline halos around subjects.
               </p>
             </div>
+
+            <div>
+              <div className="flex justify-between text-slate-300 mb-1.5 font-semibold">
+                <span>Hair & Fur Softness</span>
+                <span className="text-accent-cyan font-bold">{refine.feather || 1}px</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="4"
+                step="0.5"
+                value={refine.feather || 1}
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  onChangeRefine({ ...refine, feather: val });
+                  if (onApplyRefine) onApplyRefine({ ...refine, feather: val });
+                }}
+              />
+              <p className="text-[10px] text-slate-400 mt-1.5 text-pretty">
+                Preserves wispy hair strands, delicate lace, and animal fur without harsh clipping.
+              </p>
+            </div>
           </div>
         )}
       </div>
@@ -305,6 +329,43 @@ export default function RetouchPanel({
         <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
           One-Click Smart Fixes
         </label>
+
+        {/* 1-Click 100% Auto-Perfect Button */}
+        {onAutoPerfect100 && (
+          <button
+            type="button"
+            onClick={onAutoPerfect100}
+            className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-brand-600 via-accent-purple to-pink-600 hover:opacity-95 text-white transition shadow-[0_4px_16px_rgba(147,51,234,0.35)] btn-3d font-bold text-xs"
+          >
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse shrink-0" />
+              <div className="flex flex-col text-left">
+                <span className="font-extrabold text-white text-xs">1-Click 100% Auto-Perfect</span>
+                <span className="text-[10px] text-white/80 font-normal">Purge halos, specks & ground shadows</span>
+              </div>
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 text-white font-extrabold tracking-wider border border-white/30 shrink-0">
+              100% FX
+            </span>
+          </button>
+        )}
+
+        {/* Neutralize Color Spill (Despill) */}
+        {onColorDespill && (
+          <button
+            type="button"
+            onClick={onColorDespill}
+            className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group keycap-3d"
+          >
+            <div className="flex items-center gap-2.5">
+              <Layers className="w-4 h-4 text-accent-cyan group-hover:scale-110 transition-transform" />
+              <span className="font-semibold">Neutralize Color Spill (Despill)</span>
+            </div>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-studio-850 text-slate-300 font-semibold border border-studio-border">
+              Anti-Halo
+            </span>
+          </button>
+        )}
 
         {/* Purge Floor Shadows */}
         <button

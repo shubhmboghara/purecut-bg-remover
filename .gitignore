@@ -14,8 +14,9 @@ dist-ssr/
 # Legacy archive
 legacy_archive/
 
-# Temporary test screenshots and captures
+# Temporary test screenshots, captures, and debug scratch scripts
 scripts/*.png
+scripts/debug_*.js
 
 # Environment files
 .env
