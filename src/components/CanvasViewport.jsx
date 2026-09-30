@@ -259,21 +259,29 @@ export default function CanvasViewport({
 
       {/* AI Processing 3D Scanning Radar Overlay */}
       {isProcessing && (
-        <div className="absolute inset-0 z-50 bg-studio-950/90 backdrop-blur-2xl flex flex-col items-center justify-center text-center p-6 select-none preserve-3d">
-          <div className="relative w-28 h-28 mb-6 preserve-3d" style={{ transform: 'rotateX(25deg)' }}>
+        <div className="absolute inset-0 z-50 bg-studio-950/92 backdrop-blur-2xl flex flex-col items-center justify-center text-center p-6 select-none preserve-3d">
+          <div className="relative w-32 h-32 mb-6 preserve-3d" style={{ transform: 'rotateX(25deg)' }}>
             <div className="w-full h-full rounded-full border-4 border-transparent border-t-brand-500 border-r-accent-purple animate-spin"></div>
-            <div className="absolute inset-2 rounded-full border-2 border-dashed border-cyan-400/40 animate-[spin-slow_4s_linear_infinite]"></div>
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-500/20 via-studio-800 to-accent-purple/20 border border-brand-500/40 flex items-center justify-center absolute inset-0 m-auto shadow-glow">
-              <Wand2 className="w-8 h-8 text-brand-300 animate-pulse" />
+            <div className="absolute inset-2 rounded-full border-2 border-dashed border-cyan-400/50 animate-[spin-slow_4s_linear_infinite]"></div>
+            <div className="animated-border-wrap w-20 h-20 rounded-2xl absolute inset-0 m-auto flex items-center justify-center p-0.5 shadow-glow">
+              <div className="w-full h-full rounded-2xl flex items-center justify-center" style={{ background: 'oklch(0.09 0.025 260)' }}>
+                <Wand2 className="w-8 h-8 text-brand-300 animate-pulse drop-shadow-[0_0_8px_oklch(0.65_0.28_278)]" />
+              </div>
             </div>
           </div>
-          <h3 className="font-display font-black text-2xl text-white mb-2 text-balance tracking-tight">
-            Segmenting Spatial Cutout...
+          <h3 className="font-display font-black text-2xl md:text-3xl text-white mb-2 text-balance tracking-tight">
+            <span className="hero-gradient-text">Segmenting Spatial Cutout...</span>
           </h3>
           <p className="text-xs text-slate-300 mb-6 max-w-sm text-pretty font-medium">
             {processingStatus}
           </p>
-          <div className="w-80 h-3 bg-studio-950 rounded-full overflow-hidden mb-2 border border-studio-borderHighlight p-0.5 shadow-inner">
+          <div 
+            className="w-80 h-3 rounded-full overflow-hidden mb-2 p-0.5 shadow-inner"
+            style={{
+              background: 'oklch(0.07 0.02 260)',
+              border: '1px solid color-mix(in oklch, white 12%, transparent)'
+            }}
+          >
             <div
               className="h-full bg-gradient-to-r from-brand-500 via-accent-purple to-accent-cyan rounded-full transition-all duration-300 relative shadow-glow"
               style={{ width: `${processingPct}%` }}
@@ -281,56 +289,69 @@ export default function CanvasViewport({
               <div className="absolute inset-0 bg-white/30 animate-[pulse_1s_infinite]"></div>
             </div>
           </div>
-          <span className="text-xs font-mono font-bold text-brand-400 tracking-widest">{processingPct}% PROCESSED</span>
+          <span className="text-xs font-mono font-bold tracking-widest stat-glow" style={{ color: 'oklch(0.80 0.16 275)' }}>
+            {processingPct}% PROCESSED
+          </span>
         </div>
       )}
 
       {/* Edge Halo Quality Inspector Floating Bar */}
-      <div className="absolute top-5 right-5 z-35 flex items-center gap-2 p-1.5 rounded-2xl bg-studio-900/90 backdrop-blur-xl border border-studio-borderHighlight shadow-xl">
-        <span className="text-[11px] font-bold text-slate-300 px-1.5 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-brand-400" />
+      <div 
+        className="absolute top-5 right-5 z-35 flex items-center gap-1.5 p-1.5 rounded-2xl shadow-xl backdrop-blur-2xl"
+        style={{
+          background: 'color-mix(in oklch, oklch(0.09 0.025 260) 88%, transparent)',
+          border: '1px solid color-mix(in oklch, white 12%, transparent)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12)'
+        }}
+      >
+        <span className="text-[11px] font-bold text-slate-300 px-2 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5" style={{ color: 'oklch(0.80 0.16 275)' }} />
           <span>Edge Check:</span>
         </span>
         <button
           onClick={() => setInspectBackdrop('checkerboard')}
-          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+          className={`w-6 h-6 rounded-lg text-[10px] flex items-center justify-center transition ${
             inspectBackdrop === 'checkerboard'
-              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
-              : 'border-white/20 opacity-70 hover:opacity-100'
+              ? 'ring-2 ring-brand-400 scale-105 shadow-glow'
+              : 'opacity-70 hover:opacity-100 hover:scale-105'
           }`}
+          style={{ border: '1px solid color-mix(in oklch, white 20%, transparent)' }}
           title="Transparent Checkerboard"
         >
           <span className="w-4 h-4 rounded-sm checkerboard-bg inline-block"></span>
         </button>
         <button
           onClick={() => setInspectBackdrop('white')}
-          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+          className={`w-6 h-6 rounded-lg text-[10px] flex items-center justify-center transition ${
             inspectBackdrop === 'white'
-              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
-              : 'border-white/20 opacity-70 hover:opacity-100'
+              ? 'ring-2 ring-brand-400 scale-105 shadow-glow'
+              : 'opacity-70 hover:opacity-100 hover:scale-105'
           }`}
+          style={{ border: '1px solid color-mix(in oklch, white 20%, transparent)' }}
           title="Pure White #FFFFFF (Inspect for dark halos)"
         >
           <span className="w-4 h-4 rounded-sm bg-white inline-block"></span>
         </button>
         <button
           onClick={() => setInspectBackdrop('black')}
-          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+          className={`w-6 h-6 rounded-lg text-[10px] flex items-center justify-center transition ${
             inspectBackdrop === 'black'
-              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
-              : 'border-white/20 opacity-70 hover:opacity-100'
+              ? 'ring-2 ring-brand-400 scale-105 shadow-glow'
+              : 'opacity-70 hover:opacity-100 hover:scale-105'
           }`}
+          style={{ border: '1px solid color-mix(in oklch, white 20%, transparent)' }}
           title="Pitch Black #000000 (Inspect for white outlines)"
         >
           <span className="w-4 h-4 rounded-sm bg-black inline-block"></span>
         </button>
         <button
           onClick={() => setInspectBackdrop('green')}
-          className={`w-6 h-6 rounded-lg border text-[10px] flex items-center justify-center transition ${
+          className={`w-6 h-6 rounded-lg text-[10px] flex items-center justify-center transition ${
             inspectBackdrop === 'green'
-              ? 'border-brand-400 ring-2 ring-brand-500/50 scale-105'
-              : 'border-white/20 opacity-70 hover:opacity-100'
+              ? 'ring-2 ring-brand-400 scale-105 shadow-glow'
+              : 'opacity-70 hover:opacity-100 hover:scale-105'
           }`}
+          style={{ border: '1px solid color-mix(in oklch, white 20%, transparent)' }}
           title="Chroma Green #00FF00 (Chroma key edge inspection)"
         >
           <span className="w-4 h-4 rounded-sm bg-[#00ff00] inline-block"></span>
@@ -378,12 +399,19 @@ export default function CanvasViewport({
       )}
 
       {/* 3D Floating Glass Pedestal Toolbar at Bottom */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-full pedestal-3d flex items-center gap-3 text-xs shadow-2xl">
+      <div 
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 px-5 py-2 rounded-full flex items-center gap-3 text-xs shadow-2xl backdrop-blur-2xl"
+        style={{
+          background: 'color-mix(in oklch, oklch(0.09 0.025 260) 88%, transparent)',
+          border: '1px solid color-mix(in oklch, white 14%, transparent)',
+          boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.18)'
+        }}
+      >
         {/* Zoom Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setZoom((z) => Math.max(0.2, z - 0.15))}
-            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition keycap-3d"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/8 transition keycap-3d"
             title="Zoom Out"
             aria-label="Zoom out"
           >
@@ -394,7 +422,7 @@ export default function CanvasViewport({
           </span>
           <button
             onClick={() => setZoom((z) => Math.min(3.0, z + 0.15))}
-            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition keycap-3d"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/8 transition keycap-3d"
             title="Zoom In"
             aria-label="Zoom in"
           >
@@ -408,7 +436,7 @@ export default function CanvasViewport({
               const ch = canvasRefs.main.current.height || 600;
               setZoom(Math.min((c.clientWidth - 80) / cw, (c.clientHeight - 80) / ch, 1.0));
             }}
-            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition ml-0.5 keycap-3d"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/8 transition ml-0.5 keycap-3d"
             title="Fit to Screen"
             aria-label="Fit canvas to screen"
           >
@@ -416,11 +444,19 @@ export default function CanvasViewport({
           </button>
           <button
             onClick={() => setZoom(1.0)}
-            className={`px-2 py-1 rounded-xl text-[11px] font-bold transition ml-0.5 keycap-3d ${
+            className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition ml-0.5 keycap-3d ${
               Math.abs(zoom - 1.0) < 0.05
-                ? 'bg-brand-500 text-white shadow-glow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-800'
+                ? 'text-white shadow-glow'
+                : 'text-slate-400 hover:text-white hover:bg-white/8'
             }`}
+            style={
+              Math.abs(zoom - 1.0) < 0.05
+                ? {
+                    background: 'linear-gradient(135deg, oklch(0.55 0.28 278), oklch(0.60 0.28 308))',
+                    boxShadow: '0 2px 12px oklch(0.65 0.28 278 / 0.5)'
+                  }
+                : {}
+            }
             title="100% 1:1 Pixel Scale (Native Resident Inspection)"
             aria-label="100% 1:1 pixel scale"
           >
@@ -428,42 +464,67 @@ export default function CanvasViewport({
           </button>
         </div>
 
-        <div className="w-px h-5 bg-studio-borderHighlight"></div>
+        <div className="w-px h-5 bg-white/10"></div>
 
         {/* Before / After toggle (3D tactile button) */}
         <button
           onClick={() => setCompareActive(!compareActive)}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition text-xs ${
             compareActive 
-              ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow btn-3d' 
-              : 'text-slate-300 hover:text-white hover:bg-studio-800 keycap-3d'
+              ? 'text-white shadow-glow btn-3d' 
+              : 'text-slate-300 hover:text-white hover:bg-white/8 keycap-3d'
           }`}
+          style={
+            compareActive
+              ? {
+                  background: 'linear-gradient(135deg, oklch(0.55 0.28 278), oklch(0.60 0.28 308))',
+                  boxShadow: '0 2px 14px oklch(0.65 0.28 278 / 0.5)'
+                }
+              : {}
+          }
         >
           <ArrowLeftRight className="w-3.5 h-3.5" />
           <span>Before / After</span>
         </button>
 
-        <div className="w-px h-5 bg-studio-borderHighlight"></div>
+        <div className="w-px h-5 bg-white/10"></div>
 
         {/* Three.js 3D WebGL Orbit Mode button */}
         <button
           onClick={() => setThreeSpatialActive(!threeSpatialActive)}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition text-xs ${
             threeSpatialActive 
-              ? 'bg-gradient-to-r from-cyan-500 via-brand-500 to-accent-purple text-white shadow-glow btn-3d' 
-              : 'text-slate-300 hover:text-white hover:bg-studio-800 keycap-3d'
+              ? 'text-white shadow-glow btn-3d' 
+              : 'text-slate-300 hover:text-white hover:bg-white/8 keycap-3d'
           }`}
+          style={
+            threeSpatialActive
+              ? {
+                  background: 'linear-gradient(135deg, oklch(0.60 0.25 195), oklch(0.55 0.28 278), oklch(0.60 0.28 308))',
+                  boxShadow: '0 2px 14px oklch(0.82 0.18 195 / 0.5)'
+                }
+              : {}
+          }
           title="Inspect Cutout in Three.js WebGL 3D Spatial Space"
         >
-          <Rotate3D className="w-3.5 h-3.5 text-cyan-400" />
+          <Rotate3D className="w-3.5 h-3.5" style={{ color: 'oklch(0.82 0.18 195)' }} />
           <span>3D WebGL Orbit</span>
         </button>
 
-        <div className="w-px h-5 bg-studio-borderHighlight hidden sm:block"></div>
+        <div className="w-px h-5 bg-white/10 hidden sm:block"></div>
 
         {/* Quick shortcut indicator */}
         <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-          <span className="px-1.5 py-0.5 rounded-md bg-studio-950 text-slate-200 border border-studio-border shadow-inner font-bold">Space + Drag</span>
+          <span 
+            className="px-2 py-0.5 rounded-md text-slate-300 font-bold"
+            style={{
+              background: 'oklch(0.07 0.02 260)',
+              border: '1px solid color-mix(in oklch, white 10%, transparent)',
+              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)'
+            }}
+          >
+            Space + Drag
+          </span>
           <span>to Pan</span>
         </div>
       </div>

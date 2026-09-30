@@ -763,7 +763,13 @@ export default function App() {
             <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
 
             {/* Sub-Panel Controls with Container Queries and Glassmorphism */}
-            <aside className="w-80 bg-studio-900/90 backdrop-blur-xl border-r border-studio-border shadow-[4px_0_24px_rgba(0,0,0,0.5)] flex flex-col z-25 overflow-hidden panel-container">
+            <aside 
+              className="w-80 backdrop-blur-2xl border-r border-white/8 flex flex-col z-25 overflow-hidden panel-container"
+              style={{
+                background: 'color-mix(in oklch, oklch(0.09 0.025 260) 92%, transparent)',
+                boxShadow: '4px 0 30px rgba(0, 0, 0, 0.7), inset -1px 0 0 rgba(255, 255, 255, 0.03)'
+              }}
+            >
               {activeTab === 'background' && (
                 <BackgroundPanel background={background} onChangeBackground={setBackground} />
               )}
@@ -882,13 +888,24 @@ export default function App() {
         <div 
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight text-white shadow-[0_12px_32px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center gap-3 text-xs font-semibold"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl backdrop-blur-2xl text-white flex items-center gap-3 text-xs font-semibold shadow-2xl animate-float"
+          style={{
+            background: 'color-mix(in oklch, oklch(0.09 0.025 260) 94%, transparent)',
+            border: '1px solid color-mix(in oklch, white 14%, transparent)',
+            boxShadow: '0 20px 40px -8px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15)'
+          }}
         >
-          <span className={`w-2.5 h-2.5 rounded-full ${toast.isError ? 'bg-accent-rose shadow-[0_0_8px_#f43f5e]' : 'bg-accent-emerald shadow-[0_0_8px_#10b981]'}`}></span>
+          <span 
+            className={`w-2.5 h-2.5 rounded-full ${
+              toast.isError 
+                ? 'bg-rose-500 shadow-[0_0_10px_#f43f5e]' 
+                : 'bg-emerald-400 shadow-[0_0_10px_#34d399]'
+            }`}
+          ></span>
           <span className="text-slate-100">{toast.message}</span>
           <button
             onClick={() => setToast({ visible: false, message: '', isError: false })}
-            className="ml-1 text-slate-400 hover:text-white"
+            className="ml-2 text-slate-400 hover:text-white transition"
             aria-label="Dismiss message"
           >
             ✕
