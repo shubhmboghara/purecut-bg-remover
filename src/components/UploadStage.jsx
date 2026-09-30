@@ -39,6 +39,13 @@ const SAMPLES = [
   }
 ];
 
+const STATS = [
+  { num: '100%', label: 'Native Res' },
+  { num: '<2s', label: 'Processing' },
+  { num: '10K+', label: 'Batch Files' },
+  { num: '0KB', label: 'Upload' }
+];
+
 export default function UploadStage({ onSelectImage, onSelectBatch }) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [hero3DTab, setHero3DTab] = useState('three');
@@ -49,21 +56,16 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragOver(false);
-
     const files = Array.from(e.dataTransfer.files).filter((f) =>
       f.type.startsWith('image/')
     );
-
     if (files.length === 0) return;
-
     if (files.length === 1) {
       const reader = new FileReader();
       reader.onload = (evt) => onSelectImage(evt.target.result);
       reader.readAsDataURL(files[0]);
     } else {
-      if (onSelectBatch) {
-        onSelectBatch(files);
-      }
+      if (onSelectBatch) onSelectBatch(files);
     }
   };
 
@@ -80,168 +82,185 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
     const files = Array.from(e.target.files).filter((f) =>
       f.type.startsWith('image/')
     );
-    if (files.length > 0 && onSelectBatch) {
-      onSelectBatch(files);
-    }
+    if (files.length > 0 && onSelectBatch) onSelectBatch(files);
     e.target.value = '';
   };
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start p-6 md:p-10 select-none overflow-y-auto relative custom-scrollbar">
-      {/* 3D Ambient Radiant Mesh Glows */}
-      <div className="ambient-glow bg-brand-500/25 w-[650px] h-[650px] -top-32 -left-32 animate-[pulse-subtle_4s_infinite]"></div>
-      <div className="ambient-glow bg-accent-purple/20 w-[700px] h-[700px] top-1/3 -right-36"></div>
-      <div className="ambient-glow bg-accent-cyan/15 w-[550px] h-[550px] -bottom-32 left-1/4"></div>
+      {/* Deep ambient glow mesh */}
+      <div className="ambient-glow bg-brand-500/25 w-[900px] h-[900px] -top-40 -left-40 animate-[pulse-subtle_5s_ease-in-out_infinite]"></div>
+      <div className="ambient-glow bg-accent-purple/18 w-[800px] h-[800px] top-1/4 -right-40"></div>
+      <div className="ambient-glow bg-accent-cyan/10 w-[600px] h-[600px] bottom-0 left-1/3"></div>
 
-      {/* Main Container */}
-      <div className="max-w-5xl w-full flex flex-col items-center z-10 my-auto py-6">
-        
-        {/* Top 3D Floating Pill Badge */}
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-studio-900/85 border border-studio-borderHighlight backdrop-blur-xl mb-6 shadow-glow transition transform hover:scale-105">
-          <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-          <span className="text-xs font-bold text-white tracking-wide">
-            100% Result & Native Resolution Guarantee
-          </span>
-          <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse"></span>
-          <span className="text-[11px] text-accent-emerald font-bold tracking-wide">
-            Sub-Pixel Edge Matting
-          </span>
+      {/* Main container */}
+      <div className="max-w-5xl w-full flex flex-col items-center z-10 my-auto py-8">
+
+        {/* Premium animated border badge */}
+        <div className="animated-border-wrap inline-flex rounded-full mb-8">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl"
+            style={{
+              background: 'color-mix(in oklch, oklch(0.09 0.025 260) 88%, transparent)',
+              border: '1px solid color-mix(in oklch, white 15%, transparent)'
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" style={{boxShadow: '0 0 8px #34d399'}}></span>
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span className="text-[11px] font-bold text-white tracking-wide">100% In-Browser · Zero Upload · Sub-Pixel Edge Matting</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse"></span>
+          </div>
         </div>
 
-        {/* Hero Headings with 3D Depth Lighting */}
-        <h2 className="font-display font-black text-3xl sm:text-5xl md:text-6xl tracking-tight text-center text-balance mb-4 leading-none">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400 drop-shadow-sm">
-            Dimensional AI Photo Studio
+        {/* Hero headings — cinematic scale */}
+        <h2
+          className="font-display font-black text-4xl sm:text-6xl md:text-7xl tracking-tight text-center text-balance mb-5"
+          style={{ lineHeight: '1.04' }}
+        >
+          <span
+            className="bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(180deg, #ffffff 55%, oklch(0.65 0.01 260) 100%)' }}
+          >
+            Remove Any Background
           </span>
           <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-accent-purple to-accent-cyan">
-            Cutout, Lighting & 3D Shadows
+          <span className="hero-gradient-text">
+            In Seconds, Not Minutes.
           </span>
         </h2>
 
-        <p className="text-sm md:text-base text-slate-300 text-center max-w-2xl text-pretty mb-10 leading-relaxed font-normal">
-          Remove backgrounds with sub-pixel alpha matting. Craft realistic ground shadows, aperture blur, and surgical edge defringing with hardware-accelerated WebGPU & WASM.
+        <p className="text-sm md:text-base text-slate-400 text-center max-w-xl text-pretty mb-10 leading-relaxed">
+          Professional AI cutouts with sub-pixel alpha matting, 3D spatial shadows, and real-time WebGL visualization — 100% in-browser, zero upload.
         </p>
 
-        {/* Two-Column 3D Showcase: Interactive Dropzone + Spatial Layer Exploder */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-center mb-10">
+        {/* Stats strip */}
+        <div className="flex items-center justify-center gap-8 md:gap-14 mb-12 w-full">
+          {STATS.map((stat, i) => (
+            <React.Fragment key={stat.label}>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="font-display font-black text-2xl md:text-3xl text-white stat-glow">{stat.num}</span>
+                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">{stat.label}</span>
+              </div>
+              {i < STATS.length - 1 && (
+                <div className="hidden sm:block w-px h-8" style={{background: 'linear-gradient(180deg, transparent, color-mix(in oklch, white 15%, transparent), transparent)'}}></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Two-column showcase */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-center mb-12">
           
-          {/* Column 1: 3D Interactive Dropzone (7 Cols on desktop) */}
+          {/* Column 1: Upload dropzone */}
           <div className="lg:col-span-7 flex flex-col items-center">
-            <Interactive3DCard maxTilt={6} className="w-full">
+            <Interactive3DCard maxTilt={5} className="w-full">
               <div
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  setIsDragOver(true);
-                }}
+                onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
                 onDragLeave={() => setIsDragOver(false)}
                 onDrop={handleDrop}
-                className={`w-full p-8 md:p-10 rounded-3xl bg-studio-900/85 backdrop-blur-2xl border-2 transition-all duration-300 flex flex-col items-center text-center shadow-3d-card relative overflow-hidden group ${
+                className={`card-float w-full p-8 md:p-10 rounded-3xl backdrop-blur-2xl border-2 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden group ${
                   isDragOver
-                    ? 'border-brand-500 bg-brand-500/15 scale-[1.01] shadow-glow'
-                    : 'border-studio-borderHighlight hover:border-brand-500/60'
+                    ? 'border-brand-500 scale-[1.01] shadow-glow'
+                    : 'border-studio-borderHighlight hover:border-brand-500/50'
                 }`}
+                style={{
+                  background: isDragOver
+                    ? 'color-mix(in oklch, oklch(0.65 0.28 278) 8%, oklch(0.13 0.03 260))'
+                    : 'color-mix(in oklch, oklch(0.13 0.03 260) 85%, transparent)',
+                  boxShadow: isDragOver
+                    ? '0 0 60px -15px oklch(0.65 0.28 278 / 0.6)'
+                    : '0 30px 60px -15px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.07)'
+                }}
               >
-                {/* 3D Specular Top Bevel Highlight */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                {/* Top specular highlight */}
+                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                {/* Bottom glow line */}
+                <div className="absolute bottom-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-brand-500/50 to-transparent"></div>
 
-                {/* 3D Floating Icon Orb */}
-                <div className="relative mb-5 transform group-hover:scale-110 transition duration-300">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-500 via-brand-600 to-accent-purple p-0.5 shadow-glow">
-                    <div className="w-full h-full rounded-[14px] bg-studio-950 flex items-center justify-center text-brand-300">
-                      <UploadCloud className="w-9 h-9" />
+                {/* Upload icon orb */}
+                <div className="relative mb-6 group-hover:scale-110 transition duration-400">
+                  <div className="w-24 h-24 rounded-3xl p-0.5 shadow-glow" style={{background: 'linear-gradient(135deg, oklch(0.65 0.28 278), oklch(0.72 0.28 308))'}}>
+                    <div className="w-full h-full rounded-[22px] flex items-center justify-center" style={{background: 'oklch(0.09 0.025 260)'}}>
+                      <UploadCloud className="w-10 h-10 text-brand-300" />
                     </div>
                   </div>
-                  <div className="absolute -inset-2 rounded-2xl bg-brand-500/30 blur-lg -z-10 group-hover:bg-brand-500/50 transition"></div>
+                  <div className="absolute -inset-3 rounded-3xl border border-brand-500/20 animate-ping" style={{animationDuration: '3s'}}></div>
+                  <div className="absolute -inset-2 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-300" style={{background: 'oklch(0.65 0.28 278 / 0.15)', filter: 'blur(12px)'}}></div>
                 </div>
 
-                <h3 className="font-display font-black text-2xl text-white mb-2 text-balance">
-                  Drop your image here
-                </h3>
-                <p className="text-xs text-slate-400 mb-6 max-w-md text-pretty">
-                  Supports PNG, JPG, WebP, AVIF up to 25MB. Drop 1 photo for fine creative editing, or drop <strong className="text-brand-300">1,000 to 2,000+ files</strong> for instant streaming batch processing.
+                <h3 className="font-display font-black text-2xl text-white mb-2 text-balance">Drop your image here</h3>
+                <p className="text-xs text-slate-500 mb-7 max-w-md text-pretty leading-relaxed">
+                  PNG, JPG, WebP, AVIF up to 25MB. Drop 1 photo for fine creative editing, or drop{' '}
+                  <strong className="text-brand-300">1,000 to 2,000+ files</strong>{' '}for instant batch processing.
                 </p>
 
-                {/* 3D Tactile Push Buttons */}
+                {/* CTA buttons */}
                 <div className="flex flex-wrap items-center justify-center gap-3.5 mb-5 w-full">
-                  {/* Single Photo Upload (3D Primary Button) */}
                   <button
                     onClick={() => singleFileInputRef.current?.click()}
-                    className="flex-1 min-w-[200px] px-6 py-3.5 rounded-2xl bg-gradient-to-r from-brand-500 via-brand-600 to-accent-purple text-white font-bold text-xs tracking-wider uppercase btn-3d"
+                    className="flex-1 min-w-[180px] px-6 py-3.5 rounded-2xl font-bold text-xs tracking-wider uppercase text-white btn-3d"
+                    style={{ background: 'linear-gradient(135deg, oklch(0.55 0.28 278), oklch(0.62 0.28 308))' }}
                   >
-                    Select Single Photo
+                    Select Photo
                   </button>
-                  <input
-                    ref={singleFileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleSingleFileChange}
-                  />
+                  <input ref={singleFileInputRef} type="file" accept="image/*" className="hidden" onChange={handleSingleFileChange} />
 
-                  {/* Batch Upload (3D Secondary Button) */}
                   <button
                     onClick={() => batchFileInputRef.current?.click()}
-                    className="flex-1 min-w-[200px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-studio-800 border border-studio-borderHighlight text-slate-100 font-bold text-xs tracking-wider uppercase btn-3d-secondary"
+                    className="flex-1 min-w-[180px] flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl font-bold text-xs tracking-wider uppercase text-slate-200 btn-3d-secondary"
+                    style={{
+                      background: 'oklch(0.13 0.03 260)',
+                      border: '1px solid color-mix(in oklch, white 15%, transparent)'
+                    }}
                   >
                     <Layers className="w-4 h-4 text-brand-400" />
-                    <span>Batch (1,000+ Files)</span>
+                    <span>Batch 1,000+ Files</span>
                   </button>
-                  <input
-                    ref={batchFileInputRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={handleBatchFileChange}
-                  />
+                  <input ref={batchFileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleBatchFileChange} />
                 </div>
 
-                {/* Folder Upload Option */}
                 <button
                   onClick={() => folderInputRef.current?.click()}
-                  className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-brand-300 transition py-1"
+                  className="flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-brand-300 transition py-1"
                 >
                   <FolderPlus className="w-4 h-4 text-accent-purple" />
-                  <span>Or select an entire folder of photos</span>
+                  <span>Or select an entire folder</span>
                 </button>
-                <input
-                  ref={folderInputRef}
-                  type="file"
-                  webkitdirectory="true"
-                  multiple
-                  className="hidden"
-                  onChange={handleBatchFileChange}
-                />
+                <input ref={folderInputRef} type="file" webkitdirectory="true" multiple className="hidden" onChange={handleBatchFileChange} />
               </div>
             </Interactive3DCard>
           </div>
 
-          {/* Column 2: Real-Time Three.js WebGL Core & Spatial Exploder */}
+          {/* Column 2: Three.js / Spatial tab */}
           <div className="lg:col-span-5 flex flex-col justify-center w-full">
             <div className="w-full flex items-center justify-between mb-3 px-1">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
                 <span className="text-xs font-bold text-slate-300 font-display">Interactive 3D Engine</span>
               </div>
-              <div className="flex rounded-xl bg-studio-950 p-1 border border-studio-border shadow-inner">
+              <div
+                className="flex rounded-xl p-1"
+                style={{
+                  background: 'oklch(0.07 0.02 260)',
+                  border: '1px solid color-mix(in oklch, white 8%, transparent)',
+                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.6)'
+                }}
+              >
                 <button
                   onClick={() => setHero3DTab('three')}
                   className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
-                    hero3DTab === 'three'
-                      ? 'bg-brand-500 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
+                    hero3DTab === 'three' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
                   }`}
+                  style={hero3DTab === 'three' ? {background: 'linear-gradient(135deg, oklch(0.55 0.28 278), oklch(0.60 0.28 308))', boxShadow: '0 2px 12px oklch(0.65 0.28 278 / 0.45)'} : {}}
                 >
                   Three.js WebGL
                 </button>
                 <button
                   onClick={() => setHero3DTab('layers')}
                   className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
-                    hero3DTab === 'layers'
-                      ? 'bg-brand-500 text-white shadow-glow'
-                      : 'text-slate-400 hover:text-white'
+                    hero3DTab === 'layers' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
                   }`}
+                  style={hero3DTab === 'layers' ? {background: 'linear-gradient(135deg, oklch(0.55 0.28 278), oklch(0.60 0.28 308))', boxShadow: '0 2px 12px oklch(0.65 0.28 278 / 0.45)'} : {}}
                 >
                   Spatial Exploder
                 </button>
@@ -249,14 +268,24 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
             </div>
 
             {hero3DTab === 'three' ? (
-              <div className="w-full h-80 rounded-3xl pedestal-3d bg-studio-900/90 border border-studio-borderHighlight overflow-hidden relative group shadow-2xl">
+              <div
+                className="w-full h-80 rounded-3xl overflow-hidden relative group shadow-2xl"
+                style={{
+                  background: 'oklch(0.09 0.025 260)',
+                  border: '1px solid color-mix(in oklch, white 14%, transparent)',
+                  boxShadow: '0 40px 80px -20px rgba(0,0,0,0.9), 0 0 50px -15px oklch(0.65 0.28 278 / 0.15)'
+                }}
+              >
                 <ThreeHeroScene />
-                <div className="absolute bottom-3 inset-x-3 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 flex items-center justify-between pointer-events-none text-[11px]">
+                <div
+                  className="absolute bottom-3 inset-x-3 px-3 py-1.5 rounded-xl flex items-center justify-between pointer-events-none text-[11px]"
+                  style={{background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)'}}
+                >
                   <span className="text-slate-300 font-mono flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                     Three.js WebGL
                   </span>
-                  <span className="text-brand-300 font-semibold">Click & drag to spin 3D core</span>
+                  <span className="text-brand-300 font-semibold">Click &amp; drag to spin</span>
                 </div>
               </div>
             ) : (
@@ -265,34 +294,38 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
           </div>
         </div>
 
-        {/* Interactive 3D Sample Showcase */}
-        <div className="flex flex-col items-center gap-3 w-full mb-10">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-brand-400" />
-            <span>Instant 3D Demo Samples</span>
+        {/* Sample images */}
+        <div className="flex flex-col items-center gap-4 w-full mb-12">
+          <div className="flex items-center gap-4 w-full">
+            <div className="flex-1 h-px" style={{background: 'linear-gradient(90deg, transparent, color-mix(in oklch, white 12%, transparent))'}}></div>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">
+              <Sparkles className="w-3 h-3 text-brand-500" />
+              <span>Try a sample</span>
+            </div>
+            <div className="flex-1 h-px" style={{background: 'linear-gradient(270deg, transparent, color-mix(in oklch, white 12%, transparent))'}}></div>
           </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 w-full">
             {SAMPLES.map((s) => (
               <Interactive3DCard key={s.type} maxTilt={8} className="w-full">
                 <button
                   onClick={() => onSelectImage(s.full)}
-                  className="w-full p-3 rounded-2xl bg-studio-900/80 hover:bg-studio-850 border border-studio-border hover:border-brand-500/60 transition-all flex items-center gap-3.5 text-left group shadow-lg"
+                  className="card-float w-full p-3 rounded-2xl border text-left group flex items-center gap-3.5"
+                  style={{
+                    background: 'color-mix(in oklch, oklch(0.13 0.03 260) 80%, transparent)',
+                    border: '1px solid color-mix(in oklch, white 9%, transparent)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.4)'
+                  }}
                 >
                   <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-white/10 checkerboard-bg shadow-inner">
-                    <img
-                      src={s.thumb}
-                      alt={s.label}
-                      className="w-full h-full object-cover group-hover:scale-115 transition duration-500"
-                    />
+                    <img src={s.thumb} alt={s.label} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="text-xs font-bold text-white truncate group-hover:text-brand-300 transition flex items-center gap-1.5">
                       <span>{s.label}</span>
-                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition" />
+                      <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition" />
                     </span>
-                    <span className="text-[11px] text-slate-400 truncate">
-                      {s.tag}
-                    </span>
+                    <span className="text-[11px] text-slate-500 truncate">{s.tag}</span>
                   </div>
                 </button>
               </Interactive3DCard>
@@ -300,55 +333,44 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
           </div>
         </div>
 
-        {/* 3D Bento Capability Pedestals */}
+        {/* Separator */}
+        <div
+          className="w-full h-px mb-8"
+          style={{background: 'linear-gradient(90deg, transparent, color-mix(in oklch, white 10%, transparent) 20%, color-mix(in oklch, white 10%, transparent) 80%, transparent)'}}
+        ></div>
+
+        {/* 3D Bento capability tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5 w-full text-left">
-          <Interactive3DCard maxTilt={5}>
-            <div className="p-4 rounded-2xl bg-studio-900/70 border border-studio-border backdrop-blur-md flex flex-col gap-2 shadow-lg h-full">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-glow-emerald">
-                <ShieldCheck className="w-5 h-5" />
+          {[
+            { icon: ShieldCheck, color: 'emerald', title: '100% In-Browser Privacy', desc: 'Zero cloud upload. Your photos never leave your device.' },
+            { icon: Sparkles, color: 'amber', title: '100% Native Resolution', desc: 'Zero downscaling loss. Exact original camera megapixel fidelity.' },
+            { icon: Sliders, color: 'purple', title: 'Sub-Pixel Edge Matting', desc: 'Closed-form despill, hair strand feathering & halo shaving.' },
+            { icon: Layers, color: 'cyan', title: '10,000+ Extreme Batch', desc: 'Direct-to-Disk auto-save with near-zero RAM consumption.' }
+          ].map(({ icon: Icon, color, title, desc }) => (
+            <Interactive3DCard key={title} maxTilt={5}>
+              <div
+                className="card-float p-4 rounded-2xl backdrop-blur-md flex flex-col gap-2.5 h-full"
+                style={{
+                  background: 'color-mix(in oklch, oklch(0.13 0.03 260) 75%, transparent)',
+                  border: '1px solid color-mix(in oklch, white 9%, transparent)',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06)'
+                }}
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center`}
+                  style={{
+                    background: color === 'emerald' ? 'oklch(0.75 0.19 155 / 0.12)' : color === 'amber' ? 'oklch(0.78 0.18 75 / 0.12)' : color === 'purple' ? 'oklch(0.72 0.28 308 / 0.12)' : 'oklch(0.82 0.18 195 / 0.12)',
+                    border: `1px solid ${color === 'emerald' ? 'oklch(0.75 0.19 155 / 0.3)' : color === 'amber' ? 'oklch(0.78 0.18 75 / 0.3)' : color === 'purple' ? 'oklch(0.72 0.28 308 / 0.3)' : 'oklch(0.82 0.18 195 / 0.3)'}`,
+                    color: color === 'emerald' ? 'oklch(0.75 0.19 155)' : color === 'amber' ? 'oklch(0.78 0.18 75)' : color === 'purple' ? 'oklch(0.72 0.28 308)' : 'oklch(0.82 0.18 195)'
+                  }}
+                >
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-white">{title}</span>
+                <span className="text-[11px] text-slate-500 text-pretty leading-relaxed">{desc}</span>
               </div>
-              <span className="text-xs font-bold text-white">100% In-Browser Privacy</span>
-              <span className="text-[11px] text-slate-400 text-pretty">
-                Zero cloud upload. Your photos never leave your device.
-              </span>
-            </div>
-          </Interactive3DCard>
-
-          <Interactive3DCard maxTilt={5}>
-            <div className="p-4 rounded-2xl bg-studio-900/70 border border-studio-border backdrop-blur-md flex flex-col gap-2 shadow-lg h-full">
-              <div className="w-9 h-9 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center shadow-glow">
-                <Sparkles className="w-5 h-5 text-amber-300" />
-              </div>
-              <span className="text-xs font-bold text-white">100% Resident Resolution</span>
-              <span className="text-[11px] text-slate-400 text-pretty">
-                Zero downscaling loss. 100% exact original camera megapixel fidelity.
-              </span>
-            </div>
-          </Interactive3DCard>
-
-          <Interactive3DCard maxTilt={5}>
-            <div className="p-4 rounded-2xl bg-studio-900/70 border border-studio-border backdrop-blur-md flex flex-col gap-2 shadow-lg h-full">
-              <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-accent-purple flex items-center justify-center shadow-glow-purple">
-                <Sliders className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-white">Sub-Pixel Edge Matting</span>
-              <span className="text-[11px] text-slate-400 text-pretty">
-                Closed-form despill, hair strand feathering & halo shaving.
-              </span>
-            </div>
-          </Interactive3DCard>
-
-          <Interactive3DCard maxTilt={5}>
-            <div className="p-4 rounded-2xl bg-studio-900/70 border border-studio-border backdrop-blur-md flex flex-col gap-2 shadow-lg h-full">
-              <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-accent-cyan flex items-center justify-center">
-                <Layers className="w-5 h-5" />
-              </div>
-              <span className="text-xs font-bold text-white">10,000+ Extreme Batch</span>
-              <span className="text-[11px] text-slate-400 text-pretty">
-                Direct-to-Disk auto-save with 0 MB RAM consumption.
-              </span>
-            </div>
-          </Interactive3DCard>
+            </Interactive3DCard>
+          ))}
         </div>
 
       </div>

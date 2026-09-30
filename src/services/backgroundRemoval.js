@@ -20,7 +20,9 @@ export async function removeBackgroundAIBlob(imageInput, onProgress) {
 
   const postProcessOpts = {
     autoCleanIslands: config.autoCleanIslands,
-    autoCleanShadows: config.autoCleanShadows,
+    // Automatic floor shadow purging is kept for manual Retouch panel trigger
+    // so dark trousers, shoes, and black clothing are 100% protected
+    autoCleanShadows: false,
     originalImg: loadedImg
   };
 
@@ -253,17 +255,17 @@ export function decontaminateEdgePixels(ctx, w, h, featherRadius = 1) {
   const data = imgData.data;
 
   // 0. Sub-threshold alpha clamp & Hermite contrast enhancement
-  // Eliminates faint background noise (alpha <= 12) and solidifies subject (alpha >= 238)
+  // Eliminates background noise floor (alpha <= 32) and solidifies subject (alpha >= 225)
   for (let i = 0; i < w * h; i++) {
     const aIdx = i * 4 + 3;
     const a = data[aIdx];
-    if (a <= 12) {
+    if (a <= 32) {
       data[aIdx] = 0;
-    } else if (a >= 238) {
+    } else if (a >= 225) {
       data[aIdx] = 255;
     } else {
       // Smoothstep curve for pristine hair strands and soft edges
-      const t = (a - 12) / (238 - 12);
+      const t = (a - 32) / (225 - 32);
       data[aIdx] = Math.round(255 * (t * t * (3 - 2 * t)));
     }
   }

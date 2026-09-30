@@ -337,7 +337,7 @@ export function applyCleanStrayIslands(maskCanvas, minAreaRatio = 0.005) {
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const pos = y * w + x;
-      if (data[pos * 4 + 3] > 30 && labels[pos] === 0) {
+      if (data[pos * 4 + 3] > 10 && labels[pos] === 0) {
         // Start BFS for new component
         const label = currentLabel++;
         componentSizes[label] = 0;
@@ -361,7 +361,7 @@ export function applyCleanStrayIslands(maskCanvas, minAreaRatio = 0.005) {
           ];
 
           for (const nPos of neighbors) {
-            if (nPos !== -1 && labels[nPos] === 0 && data[nPos * 4 + 3] > 30) {
+            if (nPos !== -1 && labels[nPos] === 0 && data[nPos * 4 + 3] > 10) {
               labels[nPos] = label;
               queue.push(nPos);
             }

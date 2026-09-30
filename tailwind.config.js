@@ -28,6 +28,7 @@ export default {
         },
         accent: {
           purple: 'oklch(0.68 0.25 310)',
+          violet: 'oklch(0.72 0.28 308)',
           cyan: 'oklch(0.78 0.16 195)',
           emerald: 'oklch(0.75 0.19 155)',
           amber: 'oklch(0.78 0.18 75)',
@@ -41,9 +42,12 @@ export default {
       boxShadow: {
         glow: '0 0 30px -5px oklch(0.63 0.25 275 / 0.45)',
         'glow-purple': '0 0 30px -5px oklch(0.68 0.25 310 / 0.45)',
+        'glow-violet': '0 0 30px -5px oklch(0.72 0.28 308 / 0.5)',
+        'glow-cyan': '0 0 30px -5px oklch(0.82 0.18 195 / 0.5)',
         'glow-emerald': '0 0 30px -5px oklch(0.75 0.19 155 / 0.45)',
         studio: '0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08)',
         glass: 'inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 32px rgba(0, 0, 0, 0.45)',
+        premium: '0 40px 80px -20px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.08)',
       }
     },
   },

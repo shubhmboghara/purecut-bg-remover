@@ -5,13 +5,15 @@
 @layer base {
   :root {
     color-scheme: dark;
-    --studio-bg: oklch(0.12 0.02 260);
-    --studio-surface: oklch(0.16 0.025 260);
-    --studio-surface-elevated: oklch(0.19 0.03 260);
-    --studio-border: color-mix(in oklch, white 10%, transparent);
-    --studio-border-highlight: color-mix(in oklch, white 22%, transparent);
-    --brand-primary: oklch(0.63 0.25 275);
-    --brand-secondary: oklch(0.68 0.25 310);
+    --studio-bg: oklch(0.09 0.025 260);
+    --studio-surface: oklch(0.13 0.03 260);
+    --studio-surface-elevated: oklch(0.16 0.035 260);
+    --studio-border: color-mix(in oklch, white 8%, transparent);
+    --studio-border-highlight: color-mix(in oklch, white 18%, transparent);
+    --brand-primary: oklch(0.65 0.28 278);
+    --brand-glow: oklch(0.65 0.28 278 / 0.5);
+    --accent-violet: oklch(0.72 0.28 308);
+    --accent-cyan: oklch(0.82 0.18 195);
     --accent-emerald: oklch(0.75 0.19 155);
   }
 
@@ -82,20 +84,22 @@
 /* 3D Tactile Push Buttons with Physical Bottom Bevel & Depth */
 .btn-3d {
   position: relative;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
   box-shadow: 
-    0 4px 0 oklch(0.44 0.26 275), 
-    0 10px 25px -4px rgba(99, 102, 241, 0.45), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 4px 0 oklch(0.42 0.28 278), 
+    0 12px 32px -4px oklch(0.65 0.28 278 / 0.55), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .btn-3d:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 
-    0 5px 0 oklch(0.44 0.26 275), 
-    0 14px 28px -4px rgba(99, 102, 241, 0.55), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    0 6px 0 oklch(0.42 0.28 278), 
+    0 20px 40px -4px oklch(0.65 0.28 278 / 0.7), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .btn-3d:active {
@@ -160,14 +164,15 @@
 
 /* 3D Glass Pedestal */
 .pedestal-3d {
-  background: color-mix(in oklch, var(--studio-surface) 80%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--studio-border-highlight);
+  background: color-mix(in oklch, oklch(0.13 0.03 260) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  border: 1px solid color-mix(in oklch, white 14%, transparent);
   box-shadow: 
-    0 30px 60px -15px rgba(0, 0, 0, 0.8), 
-    0 0 40px -10px oklch(0.63 0.25 275 / 0.25), 
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 40px 80px -20px rgba(0, 0, 0, 0.9), 
+    0 0 50px -15px oklch(0.65 0.28 278 / 0.2), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
 }
 
 /* Native Dialogs & Overlays with @starting-style */
@@ -320,4 +325,139 @@ input[type="range"]::-webkit-slider-thumb:hover {
   transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
   animation: shimmer-sweep 2.5s infinite;
+}
+
+/* Noise texture overlay for premium film grain feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+}
+
+/* @property animated border */
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes rotate-border {
+  to { --border-angle: 360deg; }
+}
+
+.animated-border-wrap {
+  position: relative;
+  isolation: isolate;
+  border-radius: inherit;
+}
+
+.animated-border-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background-image: conic-gradient(
+    from var(--border-angle),
+    oklch(0.65 0.28 278 / 0.85) 0%,
+    oklch(0.72 0.28 308 / 0.65) 25%,
+    oklch(0.82 0.18 195 / 0.75) 50%,
+    oklch(0.72 0.28 308 / 0.65) 75%,
+    oklch(0.65 0.28 278 / 0.85) 100%
+  );
+  animation: rotate-border 5s linear infinite;
+  z-index: -1;
+}
+
+/* Hero animated gradient text */
+@property --grad-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 90deg;
+}
+
+@keyframes hue-shift-grad {
+  0%   { --grad-angle: 90deg; }
+  50%  { --grad-angle: 145deg; }
+  100% { --grad-angle: 90deg; }
+}
+
+.hero-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(
+    var(--grad-angle),
+    oklch(0.65 0.28 278),
+    oklch(0.72 0.28 308),
+    oklch(0.82 0.18 195),
+    oklch(0.72 0.28 308)
+  );
+  animation: hue-shift-grad 5s ease-in-out infinite;
+}
+
+/* Float card hover effect */
+.card-float {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-float:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 70px -12px rgba(0, 0, 0, 0.85), 
+              0 0 0 1px rgba(255, 255, 255, 0.07),
+              0 0 50px -15px oklch(0.65 0.28 278 / 0.28);
+}
+
+/* Premium navbar glass */
+.navbar-glass {
+  background: color-mix(in oklch, oklch(0.09 0.025 260) 88%, transparent);
+  backdrop-filter: saturate(200%) blur(24px);
+  -webkit-backdrop-filter: saturate(200%) blur(24px);
+  border-bottom: 1px solid color-mix(in oklch, white 10%, transparent);
+  box-shadow: 
+    0 1px 0 color-mix(in oklch, white 5%, transparent),
+    0 8px 32px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* Glowing stat number */
+.stat-glow {
+  text-shadow: 
+    0 0 20px oklch(0.65 0.28 278 / 0.6),
+    0 0 50px oklch(0.65 0.28 278 / 0.3);
+}
+
+/* Gradient underline link */
+.gradient-underline {
+  position: relative;
+}
+.gradient-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, oklch(0.65 0.28 278), oklch(0.82 0.18 195));
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gradient-underline:hover::after {
+  transform: scaleX(1);
+}
+
+/* Floating keyframe */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float-y 3.5s ease-in-out infinite;
 }
