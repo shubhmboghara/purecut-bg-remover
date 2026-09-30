@@ -40,3 +40,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Downloaded AI model binaries (imgly/ort)
+public/imgly/*
+!public/imgly/resources.json
