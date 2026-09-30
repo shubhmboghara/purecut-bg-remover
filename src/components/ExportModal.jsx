@@ -112,13 +112,13 @@ export default function ExportModal({
       className="p-4 bg-transparent outline-none"
     >
       <div 
-        className="bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight rounded-3xl max-w-lg w-full overflow-hidden shadow-studio flex flex-col select-none animate-shimmer"
+        className="bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight rounded-3xl max-w-lg w-full overflow-hidden pedestal-3d flex flex-col select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-studio-border flex items-center justify-between bg-studio-950/60">
+        <div className="px-6 py-4 border-b border-studio-border flex items-center justify-between bg-studio-950/80">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400">
+            <div className="w-8 h-8 rounded-xl bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-brand-400 shadow-[0_2px_8px_rgba(59,130,246,0.3)]">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
@@ -161,10 +161,10 @@ export default function ExportModal({
                 <button
                   key={fmt.id}
                   onClick={() => setFormat(fmt.id)}
-                  className={`p-3 rounded-2xl border flex flex-col text-left transition relative ${
+                  className={`p-3 rounded-2xl border flex flex-col text-left transition-all duration-150 relative ${
                     format === fmt.id
-                      ? 'border-brand-500 bg-brand-500/15 shadow-glow'
-                      : 'border-studio-border bg-studio-850/60 hover:bg-studio-800'
+                      ? 'border-brand-400 bg-gradient-to-b from-brand-500/25 to-brand-600/15 shadow-[0_4px_12px_rgba(59,130,246,0.35),0_3px_0_theme(colors.brand.700)] -translate-y-0.5'
+                      : 'border-studio-border bg-studio-850/60 shadow-[0_2px_0_rgba(0,0,0,0.5)] hover:bg-studio-800 hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none'
                   }`}
                 >
                   <div className="flex items-center justify-between w-full mb-1">
@@ -183,7 +183,7 @@ export default function ExportModal({
 
           {/* Quality Slider (for JPG) */}
           {format === 'jpeg' && (
-            <div className="p-3.5 rounded-2xl bg-studio-950 border border-studio-border">
+            <div className="p-3.5 rounded-2xl bg-studio-950 border border-studio-border shadow-inner">
               <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
                 <span>JPEG Compression Quality</span>
                 <span className="text-brand-400 font-bold">{quality}%</span>
@@ -199,7 +199,7 @@ export default function ExportModal({
           )}
 
           {/* Technical Export Metadata */}
-          <div className="p-3 bg-studio-950/70 rounded-2xl border border-studio-border flex justify-between items-center text-xs">
+          <div className="p-3 bg-studio-950/70 rounded-2xl border border-studio-border flex justify-between items-center text-xs shadow-inner">
             <span className="text-slate-400 flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5 text-brand-400" />
               Full Resolution Output:
@@ -214,7 +214,7 @@ export default function ExportModal({
         <div className="px-6 py-4 bg-studio-950/90 border-t border-studio-border flex items-center justify-end gap-3">
           <button
             onClick={handleCopyClipboard}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-semibold text-slate-200 border border-studio-border transition"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl btn-3d-secondary text-xs font-semibold text-slate-200 transition"
           >
             {copied ? <Check className="w-4 h-4 text-accent-emerald" /> : <ClipboardCheck className="w-4 h-4" />}
             <span>{copied ? 'Copied to Clipboard!' : 'Copy to Clipboard'}</span>
@@ -222,7 +222,7 @@ export default function ExportModal({
 
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 via-brand-600 to-accent-purple hover:from-brand-600 hover:to-accent-purple text-xs font-bold text-white shadow-glow transition transform hover:-translate-y-0.5 active:translate-y-0"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl btn-3d text-xs font-bold text-white shadow-glow"
           >
             <Download className="w-4 h-4" />
             <span>Download High-Res</span>

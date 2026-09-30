@@ -24,7 +24,7 @@ export default function CanvasSizePanel({ aspectRatio, onSelectRatio, originalDi
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3">
         {RATIOS.map((r) => {
           const Icon = r.icon;
           const isActive = aspectRatio === r.id;
@@ -32,13 +32,17 @@ export default function CanvasSizePanel({ aspectRatio, onSelectRatio, originalDi
             <button
               key={r.id}
               onClick={() => onSelectRatio(r.id)}
-              className={`p-3.5 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition text-center ${
+              className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-1.5 text-center transition-all duration-150 transform ${
                 isActive
-                  ? 'border-brand-500 bg-brand-500/15 text-white shadow-glow'
-                  : 'border-studio-border bg-studio-950 text-slate-400 hover:bg-studio-850 hover:text-slate-200'
+                  ? 'border-brand-400 bg-gradient-to-b from-brand-500/25 to-brand-600/20 text-white shadow-[0_4px_12px_rgba(59,130,246,0.35),0_3px_0_theme(colors.brand.700)] -translate-y-0.5'
+                  : 'border-studio-border bg-studio-950 text-slate-400 shadow-[0_3px_0_rgba(0,0,0,0.5)] hover:border-slate-600 hover:text-white hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none'
               }`}
             >
-              <Icon className="w-5 h-5 text-brand-400 mb-0.5" />
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-0.5 transition-colors ${
+                isActive ? 'bg-brand-500/30 text-brand-300' : 'bg-studio-900 text-slate-400'
+              }`}>
+                <Icon className="w-4 h-4" />
+              </div>
               <span className="text-xs font-bold">{r.title}</span>
               <span className="text-[10px] text-slate-400 font-mono">
                 {r.id === 'original' && originalDimensions 

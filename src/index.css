@@ -45,7 +45,7 @@
     outline-offset: 2px;
   }
 
-  /* Dynamic Form Validation UX (:user-invalid / :user-valid) */
+  /* Dynamic Form Validation UX */
   input:user-invalid, textarea:user-invalid {
     border-color: oklch(0.68 0.24 25) !important;
     box-shadow: 0 0 0 1px oklch(0.68 0.24 25) !important;
@@ -55,20 +55,122 @@
     border-color: var(--brand-primary) !important;
   }
 
-  /* Auto-sizing input/textarea */
   .auto-size-field {
     field-sizing: content;
   }
 }
 
-/* View Transitions API (Modern Web Guidance Rule 2) */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.24s;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+/* 3D Spatial Computing & Perspective Architecture */
+.perspective-800 {
+  perspective: 800px;
+}
+.perspective-1000 {
+  perspective: 1000px;
+}
+.perspective-1500 {
+  perspective: 1500px;
 }
 
-/* Native Dialogs & Overlays with @starting-style (Modern Web Guidance Rule 2) */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* 3D Tactile Push Buttons with Physical Bottom Bevel & Depth */
+.btn-3d {
+  position: relative;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 4px 0 oklch(0.44 0.26 275), 
+    0 10px 25px -4px rgba(99, 102, 241, 0.45), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.btn-3d:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 5px 0 oklch(0.44 0.26 275), 
+    0 14px 28px -4px rgba(99, 102, 241, 0.55), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.btn-3d:active {
+  transform: translateY(3px) !important;
+  box-shadow: 
+    0 1px 0 oklch(0.44 0.26 275), 
+    0 4px 12px -2px rgba(99, 102, 241, 0.35), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-3d-secondary {
+  position: relative;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 3px 0 oklch(0.18 0.03 260), 
+    0 8px 20px -4px rgba(0, 0, 0, 0.6), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.btn-3d-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 0 oklch(0.18 0.03 260), 
+    0 10px 24px -4px rgba(0, 0, 0, 0.7), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-3d-secondary:active {
+  transform: translateY(2px) !important;
+  box-shadow: 
+    0 1px 0 oklch(0.18 0.03 260), 
+    0 3px 8px -2px rgba(0, 0, 0, 0.5), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* 3D Tactile Switches & Rocker Keys */
+.keycap-3d {
+  position: relative;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    0 3px 0 rgba(0, 0, 0, 0.4), 
+    0 4px 12px rgba(0, 0, 0, 0.3), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.keycap-3d:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 0 rgba(0, 0, 0, 0.45), 
+    0 6px 16px rgba(0, 0, 0, 0.4), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.keycap-3d:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 1px 0 rgba(0, 0, 0, 0.4), 
+    0 2px 6px rgba(0, 0, 0, 0.2), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* 3D Glass Pedestal */
+.pedestal-3d {
+  background: color-mix(in oklch, var(--studio-surface) 80%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--studio-border-highlight);
+  box-shadow: 
+    0 30px 60px -15px rgba(0, 0, 0, 0.8), 
+    0 0 40px -10px oklch(0.63 0.25 275 / 0.25), 
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Native Dialogs & Overlays with @starting-style */
 dialog {
   margin: auto;
   border: none;
@@ -83,7 +185,7 @@ dialog[open] {
   align-items: center;
   justify-content: center;
   opacity: 1;
-  transform: scale(1) translateY(0);
+  transform: perspective(800px) rotateX(0deg) scale(1) translateY(0);
   transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               display 0.25s allow-discrete,
@@ -93,13 +195,13 @@ dialog[open] {
 @starting-style {
   dialog[open] {
     opacity: 0;
-    transform: scale(0.96) translateY(8px);
+    transform: perspective(800px) rotateX(6deg) scale(0.95) translateY(12px);
   }
 }
 
 dialog::backdrop {
-  background: oklch(0 0 0 / 0.72);
-  backdrop-filter: blur(12px);
+  background: oklch(0 0 0 / 0.75);
+  backdrop-filter: blur(14px);
   opacity: 1;
   transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               backdrop-filter 0.25s cubic-bezier(0.16, 1, 0.3, 1),
@@ -114,32 +216,16 @@ dialog::backdrop {
   }
 }
 
+/* View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.24s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Container Queries Support */
 .panel-container {
   container-type: inline-size;
-}
-
-/* Glassmorphism & Visual Aesthetics */
-.glass-panel {
-  background: color-mix(in oklch, var(--studio-surface) 85%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--studio-border);
-  box-shadow: inset 0 1px 0 color-mix(in oklch, white 12%, transparent), 0 12px 32px rgba(0, 0, 0, 0.4);
-}
-
-.glass-card {
-  background: color-mix(in oklch, var(--studio-surface-elevated) 70%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--studio-border);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-card:hover {
-  background: color-mix(in oklch, var(--studio-surface-elevated) 85%, transparent);
-  border-color: var(--studio-border-highlight);
-  transform: translateY(-2px);
 }
 
 /* Ambient Radial Glow */
@@ -147,8 +233,8 @@ dialog::backdrop {
   position: absolute;
   pointer-events: none;
   border-radius: 9999px;
-  filter: blur(80px);
-  opacity: 0.35;
+  filter: blur(90px);
+  opacity: 0.4;
   will-change: transform, opacity;
 }
 
@@ -180,38 +266,43 @@ dialog::backdrop {
   background: color-mix(in oklch, white 25%, transparent);
 }
 
-/* Custom Sleek Range Sliders with Gradient Tracks */
+/* 3D Tactile Range Sliders with Glowing Spherical Thumbs */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
+  height: 7px;
   background: color-mix(in oklch, var(--studio-surface-elevated) 80%, black);
   border-radius: 9999px;
   outline: none;
   cursor: pointer;
   border: 1px solid var(--studio-border);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
-  border: 2px solid #ffffff;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, var(--brand-primary) 65%, oklch(0.45 0.25 275) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 10px var(--brand-primary);
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.6), 
+    0 0 12px var(--brand-primary);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6), 0 0 16px var(--brand-primary);
+  transform: scale(1.22);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.7), 
+    0 0 20px var(--brand-primary);
 }
 
-/* Keyframe Animations */
+/* Shimmer Keyframe */
 @keyframes shimmer-sweep {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -227,15 +318,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-  animation: shimmer-sweep 2.2s infinite;
-}
-
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(0.98); }
-}
-
-.animate-pulse-subtle {
-  animation: pulse-subtle 3s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: shimmer-sweep 2.5s infinite;
 }

@@ -66,7 +66,7 @@ export default function TransformPanel({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={onCenter}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
+            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition keycap-3d"
           >
             <Crosshair className="w-4 h-4 text-brand-400" />
             <span>Center</span>
@@ -74,7 +74,7 @@ export default function TransformPanel({
 
           <button
             onClick={onFit}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
+            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition keycap-3d"
           >
             <Maximize2 className="w-4 h-4 text-brand-400" />
             <span>Fit Canvas</span>
@@ -82,7 +82,7 @@ export default function TransformPanel({
 
           <button
             onClick={() => onChangeTransform({ ...transform, flipH: (transform.flipH || 1) * -1 })}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
+            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition keycap-3d"
           >
             <FlipHorizontal className="w-4 h-4 text-accent-cyan" />
             <span>Flip Horizontal</span>
@@ -90,7 +90,7 @@ export default function TransformPanel({
 
           <button
             onClick={() => onChangeTransform({ ...transform, flipV: (transform.flipV || 1) * -1 })}
-            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
+            className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition keycap-3d"
           >
             <FlipVertical className="w-4 h-4 text-accent-purple" />
             <span>Flip Vertical</span>

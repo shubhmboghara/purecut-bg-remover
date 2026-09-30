@@ -726,7 +726,7 @@ export default function App() {
             <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
 
             {/* Sub-Panel Controls with Container Queries and Glassmorphism */}
-            <aside className="w-80 bg-studio-900/90 backdrop-blur-xl border-r border-studio-border flex flex-col z-25 overflow-hidden panel-container">
+            <aside className="w-80 bg-studio-900/90 backdrop-blur-xl border-r border-studio-border shadow-[4px_0_24px_rgba(0,0,0,0.5)] flex flex-col z-25 overflow-hidden panel-container">
               {activeTab === 'background' && (
                 <BackgroundPanel background={background} onChangeBackground={setBackground} />
               )}
@@ -842,7 +842,7 @@ export default function App() {
         <div 
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-studio-900/90 backdrop-blur-2xl border border-studio-borderHighlight text-white shadow-studio flex items-center gap-3 text-xs font-semibold animate-shimmer"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight text-white shadow-[0_12px_32px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.2)] flex items-center gap-3 text-xs font-semibold"
         >
           <span className={`w-2.5 h-2.5 rounded-full ${toast.isError ? 'bg-accent-rose shadow-[0_0_8px_#f43f5e]' : 'bg-accent-emerald shadow-[0_0_8px_#10b981]'}`}></span>
           <span className="text-slate-100">{toast.message}</span>

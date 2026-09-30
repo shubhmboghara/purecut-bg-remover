@@ -73,7 +73,7 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
       </div>
 
       {/* Category Tabs */}
-      <div className="grid grid-cols-3 gap-1.5 p-1 bg-studio-950/80 rounded-2xl border border-studio-border">
+      <div className="grid grid-cols-3 gap-1.5 p-1 bg-studio-950/80 rounded-2xl border border-studio-border shadow-inner">
         {[
           { id: 'transparent', label: 'Transparent' },
           { id: 'color', label: 'Solid' },
@@ -85,10 +85,10 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
           <button
             key={cat.id}
             onClick={() => onChangeBackground({ ...background, type: cat.id })}
-            className={`py-1.5 px-2 rounded-xl text-xs font-semibold transition text-center ${
+            className={`py-2 px-2 rounded-xl text-xs font-semibold transition-all duration-150 text-center ${
               background.type === cat.id
-                ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow'
-                : 'text-slate-400 hover:text-white hover:bg-studio-800/60'
+                ? 'bg-gradient-to-b from-brand-500 to-brand-600 text-white shadow-[0_3px_0_theme(colors.brand.700),0_6px_12px_rgba(59,130,246,0.3)] -translate-y-0.5 border-t border-white/25'
+                : 'text-slate-400 hover:text-white hover:bg-studio-800/60 active:translate-y-0.5'
             }`}
           >
             {cat.label}
@@ -98,7 +98,7 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
 
       {/* Transparent View */}
       {background.type === 'transparent' && (
-        <div className="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 flex items-start gap-3">
+        <div className="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 flex items-start gap-3 shadow-inner">
           <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
           <p className="leading-relaxed text-pretty">
             Transparent PNG alpha cutout is active. Ideal for logos, e-commerce product catalogs, stickers, and design assets.
@@ -113,7 +113,7 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
               Color Selector
             </label>
-            <div className="flex items-center gap-3 p-2.5 bg-studio-950 rounded-2xl border border-studio-border">
+            <div className="flex items-center gap-3 p-2.5 bg-studio-950 rounded-2xl border border-studio-border shadow-inner">
               <input
                 type="color"
                 value={background.color || '#ffffff'}
@@ -130,7 +130,7 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
             <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
               Studio Palette
             </label>
-            <div className="grid grid-cols-6 gap-2">
+            <div className="grid grid-cols-6 gap-2.5">
               {PALETTE.map((c) => {
                 const isSelected = background.color === c;
                 return (
@@ -138,8 +138,10 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
                     key={c}
                     onClick={() => onChangeBackground({ ...background, color: c })}
                     style={{ backgroundColor: c }}
-                    className={`w-full aspect-square rounded-xl border-2 transition transform hover:scale-105 flex items-center justify-center ${
-                      isSelected ? 'border-brand-500 scale-105 shadow-glow' : 'border-transparent'
+                    className={`w-full aspect-square rounded-xl border transition-all duration-150 transform flex items-center justify-center ${
+                      isSelected
+                        ? 'border-brand-400 ring-2 ring-brand-500/50 shadow-[0_4px_12px_rgba(59,130,246,0.45),0_2px_0_rgba(0,0,0,0.6)] -translate-y-1'
+                        : 'border-white/10 shadow-[0_3px_0_rgba(0,0,0,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none'
                     }`}
                   >
                     {isSelected && (
@@ -165,11 +167,14 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
                 key={g.name}
                 onClick={() => onChangeBackground({ ...background, gradient: g.val })}
                 style={{ background: g.val }}
-                className={`h-20 rounded-2xl border-2 flex items-end p-2.5 transition transform hover:-translate-y-0.5 relative overflow-hidden group ${
-                  background.gradient === g.val ? 'border-white shadow-glow' : 'border-transparent'
+                className={`h-20 rounded-2xl border flex items-end p-2.5 transition-all duration-150 transform relative overflow-hidden group shadow-[0_4px_12px_rgba(0,0,0,0.35),0_2px_0_rgba(0,0,0,0.5)] ${
+                  background.gradient === g.val 
+                    ? 'border-white ring-2 ring-brand-400/60 -translate-y-1 shadow-[0_8px_20px_rgba(0,0,0,0.5)]' 
+                    : 'border-white/10 hover:-translate-y-0.5 active:translate-y-0'
                 }`}
               >
-                <span className="text-[11px] font-bold text-white drop-shadow-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-white/10 pointer-events-none" />
+                <span className="text-[11px] font-bold text-white drop-shadow-md relative z-10">
                   {g.name}
                 </span>
               </button>
@@ -189,8 +194,10 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
               <button
                 key={p.name}
                 onClick={() => onChangeBackground({ ...background, photoUrl: p.url, cachedPhoto: null })}
-                className={`relative h-24 rounded-2xl overflow-hidden border-2 transition group ${
-                  background.photoUrl === p.url ? 'border-brand-500 shadow-glow' : 'border-transparent'
+                className={`relative h-24 rounded-2xl overflow-hidden border transition-all duration-150 group shadow-[0_4px_12px_rgba(0,0,0,0.4),0_2px_0_rgba(0,0,0,0.6)] ${
+                  background.photoUrl === p.url 
+                    ? 'border-brand-500 ring-2 ring-brand-500/40 -translate-y-1 shadow-glow' 
+                    : 'border-white/10 hover:-translate-y-0.5 active:translate-y-0'
                 }`}
               >
                 <img

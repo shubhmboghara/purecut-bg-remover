@@ -54,15 +54,15 @@ export default function RetouchPanel({
         <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
           Select Retouch Tool
         </label>
-        <div className="grid grid-cols-2 gap-2 p-1 bg-studio-950/80 rounded-2xl border border-studio-border">
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-studio-950 rounded-2xl border border-studio-border shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
           {/* Magic Wand */}
           <button
             type="button"
             onClick={() => onChangeTool('wand')}
-            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'wand'
                 ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
+                : 'bg-studio-900/60 text-slate-300 hover:text-white hover:bg-studio-850'
             }`}
           >
             <Wand2 className="w-3.5 h-3.5" />
@@ -73,10 +73,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('lasso')}
-            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'lasso'
                 ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-purple'
-                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
+                : 'bg-studio-900/60 text-slate-300 hover:text-white hover:bg-studio-850'
             }`}
           >
             <Lasso className="w-3.5 h-3.5" />
@@ -87,10 +87,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('erase')}
-            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'erase'
-                ? 'bg-accent-rose text-white shadow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
+                ? 'bg-accent-rose text-white shadow-[0_4px_12px_rgba(244,63,94,0.4)]'
+                : 'bg-studio-900/60 text-slate-300 hover:text-white hover:bg-studio-850'
             }`}
           >
             <Eraser className="w-3.5 h-3.5" />
@@ -101,10 +101,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('restore')}
-            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'restore'
-                ? 'bg-accent-emerald text-white shadow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
+                ? 'bg-accent-emerald text-white shadow-[0_4px_12px_rgba(16,185,129,0.4)]'
+                : 'bg-studio-900/60 text-slate-300 hover:text-white hover:bg-studio-850'
             }`}
           >
             <Paintbrush className="w-3.5 h-3.5" />
@@ -310,7 +310,7 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onPurgeFloorShadows}
-          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group keycap-3d"
         >
           <div className="flex items-center gap-2.5">
             <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
@@ -325,7 +325,7 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onCleanStrayIslands}
-          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group keycap-3d"
         >
           <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-brand-400" />
@@ -340,7 +340,7 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onDefringeEdges}
-          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group keycap-3d"
         >
           <div className="flex items-center gap-2.5">
             <Layers className="w-4 h-4 text-accent-cyan" />
@@ -355,7 +355,7 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onInvertMask}
-          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group keycap-3d"
         >
           <div className="flex items-center gap-2.5">
             <RefreshCw className="w-4 h-4 text-accent-purple" />
@@ -371,7 +371,7 @@ export default function RetouchPanel({
       <button
         type="button"
         onClick={onResetMask}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-studio-850 hover:bg-studio-800 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-studio-850 hover:bg-studio-800 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition keycap-3d"
       >
         <RotateCcw className="w-4 h-4 text-brand-400" />
         <span>Revert to Pristine AI Cutout</span>

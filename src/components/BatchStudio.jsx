@@ -406,7 +406,7 @@ export default function BatchStudio({
             {!isRunning && !isPaused && stats.pending > 0 && (
               <button
                 onClick={handleStartQueue}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs shadow-glow transition transform hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs uppercase tracking-wide btn-3d shadow-glow"
               >
                 <Play className="w-3.5 h-3.5 fill-white" />
                 <span>Start Queue ({stats.pending.toLocaleString()})</span>
@@ -416,7 +416,7 @@ export default function BatchStudio({
             {isRunning && (
               <button
                 onClick={handlePauseQueue}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs shadow-glow transition transform hover:-translate-y-0.5 animate-pulse"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-600 text-white font-bold text-xs uppercase tracking-wide btn-3d shadow-glow animate-pulse"
               >
                 <Pause className="w-3.5 h-3.5" />
                 <span>Pause Queue</span>
@@ -426,7 +426,7 @@ export default function BatchStudio({
             {isPaused && (
               <button
                 onClick={handleResumeQueue}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-glow transition transform hover:-translate-y-0.5"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs uppercase tracking-wide btn-3d shadow-glow"
               >
                 <Play className="w-3.5 h-3.5 fill-white" />
                 <span>Resume ({stats.pending.toLocaleString()})</span>
@@ -436,7 +436,7 @@ export default function BatchStudio({
             {/* Add Photos */}
             <button
               onClick={() => multiFileInputRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-border text-slate-200 font-medium text-xs transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-borderHighlight text-slate-200 font-bold text-xs transition keycap-3d"
               title="Add more photos"
             >
               <Plus className="w-3.5 h-3.5 text-brand-400" />
@@ -460,7 +460,7 @@ export default function BatchStudio({
             {/* Add Folder */}
             <button
               onClick={() => folderInputRef.current?.click()}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-border text-slate-200 font-medium text-xs transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-borderHighlight text-slate-200 font-bold text-xs transition keycap-3d"
               title="Add entire folder of images"
             >
               <FolderPlus className="w-3.5 h-3.5 text-purple-400" />
@@ -491,7 +491,7 @@ export default function BatchStudio({
                   }
                   onClearAll();
                 }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-studio-800 hover:bg-red-950/60 border border-studio-border hover:border-red-800 text-slate-400 hover:text-red-300 font-medium text-xs transition"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-studio-900 hover:bg-red-950/60 border border-studio-border hover:border-red-800 text-slate-400 hover:text-red-300 font-bold text-xs transition keycap-3d"
                 title="Clear queue"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -499,11 +499,11 @@ export default function BatchStudio({
               </button>
             )}
 
-            {/* Download All as ZIP / Volumes */}
+            {/* Download All as ZIP / Volumes (3D Primary Button) */}
             <button
               onClick={handleExportZip}
               disabled={stats.completed === 0 || isExportingZip}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white font-semibold text-xs shadow-glow disabled:opacity-40 disabled:pointer-events-none transition transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-brand-500 via-brand-600 to-accent-purple text-white font-bold text-xs tracking-wide uppercase btn-3d disabled:opacity-40 disabled:pointer-events-none"
             >
               {isExportingZip ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -519,53 +519,53 @@ export default function BatchStudio({
           </div>
         </div>
 
-        {/* Live Metrics Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-3 border-t border-studio-border">
+        {/* Live Metrics 3D Pedestals Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3 border-t border-studio-borderHighlight">
           {/* Total */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-studio-border flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Total Queue</span>
-            <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-lg font-bold text-white">{stats.total.toLocaleString()}</span>
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-studio-borderHighlight flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Total Queue</span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-xl font-black text-white">{stats.total.toLocaleString()}</span>
               <span className="text-[11px] text-slate-400">({formatBytes(stats.totalOriginalBytes)})</span>
             </div>
           </div>
 
           {/* Completed */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-emerald-900/40 flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-emerald-400">Completed</span>
-            <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-lg font-bold text-emerald-400">{stats.completed.toLocaleString()}</span>
-              <span className="text-[11px] text-emerald-500/80">({stats.pct}%)</span>
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-emerald-500/30 flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-emerald-400 tracking-wider">Completed</span>
+            <div className="flex items-baseline gap-1.5 mt-1">
+              <span className="text-xl font-black text-emerald-400">{stats.completed.toLocaleString()}</span>
+              <span className="text-[11px] text-emerald-500/80 font-bold">({stats.pct}%)</span>
             </div>
           </div>
 
           {/* Processing */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-brand-900/40 flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-brand-400">Processing</span>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-lg font-bold text-brand-400">{stats.processing}</span>
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-brand-500/30 flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-brand-400 tracking-wider">Processing</span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="text-xl font-black text-brand-400">{stats.processing}</span>
               {isRunning && <Loader2 className="w-3.5 h-3.5 text-brand-400 animate-spin" />}
             </div>
           </div>
 
           {/* Pending */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-studio-border flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Pending</span>
-            <span className="text-lg font-bold text-slate-300 mt-0.5">{stats.pending.toLocaleString()}</span>
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-studio-borderHighlight flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">Pending</span>
+            <span className="text-xl font-black text-slate-300 mt-1">{stats.pending.toLocaleString()}</span>
           </div>
 
           {/* Speed */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-studio-border flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Throughput</span>
-            <span className="text-lg font-bold text-purple-400 mt-0.5">
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-purple-500/30 flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-purple-400 tracking-wider">Throughput</span>
+            <span className="text-xl font-black text-purple-300 mt-1">
               {stats.completed > 0 ? `${speedSec}s/img` : '—'}
             </span>
           </div>
 
           {/* ETA */}
-          <div className="p-2.5 rounded-xl bg-studio-850 border border-studio-border flex flex-col">
-            <span className="text-[10px] uppercase font-bold text-slate-400">Est. Time Left</span>
-            <span className="text-lg font-bold text-amber-400 mt-0.5">
+          <div className="p-3 rounded-2xl bg-studio-900/90 border border-amber-500/30 flex flex-col keycap-3d shadow-md">
+            <span className="text-[10px] uppercase font-extrabold text-amber-400 tracking-wider">Est. Time Left</span>
+            <span className="text-xl font-black text-amber-300 mt-1 font-mono">
               {isRunning ? formatEta(etaSeconds) : stats.pending > 0 ? 'Paused' : 'Done'}
             </span>
           </div>

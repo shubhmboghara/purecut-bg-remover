@@ -78,7 +78,7 @@ export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }
 
       <button
         onClick={onResetFilters}
-        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-studio-850 hover:bg-studio-800 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition shadow-sm mt-1"
+        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl btn-3d-secondary text-xs font-bold text-slate-200 hover:text-white transition mt-1"
       >
         <RotateCcw className="w-4 h-4 text-brand-400" />
         <span>Reset Adjustments</span>

@@ -39,7 +39,8 @@ async function main() {
     '/onnxruntime-web/ort-wasm-simd-threaded.wasm',
     '/onnxruntime-web/ort-wasm-simd-threaded.jsep.mjs',
     '/onnxruntime-web/ort-wasm-simd-threaded.mjs',
-    '/models/isnet_quint8'
+    '/models/isnet_quint8',
+    '/models/isnet_fp16'
   ];
 
   const chunksToDownload = new Set();
@@ -53,8 +54,8 @@ async function main() {
   console.log(`Total files to download: ${chunksToDownload.size}`);
   const list = Array.from(chunksToDownload);
   
-  // Download with 3 concurrent workers to be fast and respectful
-  const concurrency = 3;
+  // Download with 6 concurrent workers for high throughput
+  const concurrency = 6;
   let index = 0;
 
   async function worker() {

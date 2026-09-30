@@ -111,13 +111,13 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
       className="p-4 bg-transparent outline-none"
     >
       <div 
-        className="w-full max-w-2xl bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight rounded-3xl shadow-studio overflow-hidden flex flex-col max-h-[92vh] select-none"
+        className="w-full max-w-2xl bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight rounded-3xl pedestal-3d overflow-hidden flex flex-col max-h-[92vh] select-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-studio-border flex items-center justify-between bg-studio-950/60">
+        <div className="p-5 border-b border-studio-border flex items-center justify-between bg-studio-950/80">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-purple flex items-center justify-center text-white shadow-glow">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-500 via-brand-600 to-accent-purple flex items-center justify-center text-white shadow-glow border-t border-white/30">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
@@ -408,16 +408,16 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
             <span>Settings stored safely in local browser storage</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-semibold text-slate-300 transition"
+              className="px-4 py-2 rounded-xl btn-3d-secondary text-xs font-semibold text-slate-300 transition"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-brand-500 via-brand-600 to-accent-purple hover:from-brand-600 hover:to-accent-purple text-xs font-bold text-white shadow-glow transition transform hover:-translate-y-0.5 active:translate-y-0"
+              className="px-5 py-2 rounded-xl btn-3d text-xs font-bold text-white shadow-glow"
             >
               Save & Apply Settings
             </button>

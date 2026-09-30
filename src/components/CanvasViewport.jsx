@@ -252,34 +252,35 @@ export default function CanvasViewport({
       {/* Subtle Studio Radial Vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-studio-900/40 via-studio-950 to-studio-950 pointer-events-none"></div>
 
-      {/* AI Processing Scanning Overlay */}
+      {/* AI Processing 3D Scanning Radar Overlay */}
       {isProcessing && (
-        <div className="absolute inset-0 z-50 bg-studio-950/90 backdrop-blur-xl flex flex-col items-center justify-center text-center p-6 select-none">
-          <div className="relative w-24 h-24 mb-6">
+        <div className="absolute inset-0 z-50 bg-studio-950/90 backdrop-blur-2xl flex flex-col items-center justify-center text-center p-6 select-none preserve-3d">
+          <div className="relative w-28 h-28 mb-6 preserve-3d" style={{ transform: 'rotateX(25deg)' }}>
             <div className="w-full h-full rounded-full border-4 border-transparent border-t-brand-500 border-r-accent-purple animate-spin"></div>
-            <div className="w-16 h-16 rounded-full bg-brand-500/10 border border-brand-500/30 flex items-center justify-center absolute inset-0 m-auto shadow-glow">
-              <Wand2 className="w-7 h-7 text-brand-300 animate-pulse" />
+            <div className="absolute inset-2 rounded-full border-2 border-dashed border-cyan-400/40 animate-[spin-slow_4s_linear_infinite]"></div>
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-500/20 via-studio-800 to-accent-purple/20 border border-brand-500/40 flex items-center justify-center absolute inset-0 m-auto shadow-glow">
+              <Wand2 className="w-8 h-8 text-brand-300 animate-pulse" />
             </div>
           </div>
-          <h3 className="font-display font-extrabold text-2xl text-white mb-2 text-balance">
-            Removing Background with AI...
+          <h3 className="font-display font-black text-2xl text-white mb-2 text-balance tracking-tight">
+            Segmenting Spatial Cutout...
           </h3>
-          <p className="text-xs text-slate-400 mb-6 max-w-sm text-pretty font-medium">
+          <p className="text-xs text-slate-300 mb-6 max-w-sm text-pretty font-medium">
             {processingStatus}
           </p>
-          <div className="w-72 h-2.5 bg-studio-900 rounded-full overflow-hidden mb-2 border border-studio-border">
+          <div className="w-80 h-3 bg-studio-950 rounded-full overflow-hidden mb-2 border border-studio-borderHighlight p-0.5 shadow-inner">
             <div
-              className="h-full bg-gradient-to-r from-brand-500 via-accent-purple to-emerald-400 rounded-full transition-all duration-300 relative"
+              className="h-full bg-gradient-to-r from-brand-500 via-accent-purple to-accent-cyan rounded-full transition-all duration-300 relative shadow-glow"
               style={{ width: `${processingPct}%` }}
             >
-              <div className="absolute inset-0 bg-white/25 animate-[pulse_1s_infinite]"></div>
+              <div className="absolute inset-0 bg-white/30 animate-[pulse_1s_infinite]"></div>
             </div>
           </div>
-          <span className="text-xs font-bold text-brand-400 tracking-wider">{processingPct}% Complete</span>
+          <span className="text-xs font-mono font-bold text-brand-400 tracking-widest">{processingPct}% PROCESSED</span>
         </div>
       )}
 
-      {/* Canvas Viewport Frame */}
+      {/* 3D Spatial Canvas Viewport Frame */}
       <div
         ref={wrapperRef}
         onMouseDown={handlePointerDown}
@@ -289,7 +290,7 @@ export default function CanvasViewport({
             ? (activeTool === 'wand' || activeTool === 'lasso' ? 'crosshair' : 'crosshair') 
             : 'grab'
         }}
-        className="relative shadow-studio rounded-2xl overflow-hidden checkerboard-bg transition-transform duration-75 origin-center border border-studio-borderHighlight"
+        className="relative rounded-3xl overflow-hidden checkerboard-bg transition-transform duration-75 origin-center border-2 border-white/10 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)]"
       >
         <canvas ref={canvasRefs.bg} className="absolute inset-0 z-10" />
         <canvas ref={canvasRefs.shadow} className="absolute inset-0 z-15" />
@@ -299,24 +300,24 @@ export default function CanvasViewport({
         <BeforeAfterSlider originalSrc={originalImageSrc} isActive={compareActive} />
       </div>
 
-      {/* Floating Toolbar at Bottom */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-full bg-studio-900/85 backdrop-blur-2xl border border-white/10 shadow-2xl flex items-center gap-3 text-xs">
+      {/* 3D Floating Glass Pedestal Toolbar at Bottom */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-full pedestal-3d flex items-center gap-3 text-xs shadow-2xl">
         {/* Zoom Controls */}
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => setZoom((z) => Math.max(0.2, z - 0.15))}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-studio-800 transition"
+            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition keycap-3d"
             title="Zoom Out"
             aria-label="Zoom out"
           >
             <ZoomOut className="w-4 h-4" />
           </button>
-          <span className="font-bold text-slate-200 min-w-[42px] text-center font-mono">
+          <span className="font-extrabold text-white min-w-[42px] text-center font-mono">
             {Math.round(zoom * 100)}%
           </span>
           <button
             onClick={() => setZoom((z) => Math.min(3.0, z + 0.15))}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-studio-800 transition"
+            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition keycap-3d"
             title="Zoom In"
             aria-label="Zoom in"
           >
@@ -330,7 +331,7 @@ export default function CanvasViewport({
               const ch = canvasRefs.main.current.height || 600;
               setZoom(Math.min((c.clientWidth - 80) / cw, (c.clientHeight - 80) / ch, 1.0));
             }}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-studio-800 transition ml-0.5"
+            className="p-1.5 rounded-xl text-slate-300 hover:text-white hover:bg-studio-800 transition ml-0.5 keycap-3d"
             title="Fit to Screen"
             aria-label="Fit canvas to screen"
           >
@@ -338,26 +339,26 @@ export default function CanvasViewport({
           </button>
         </div>
 
-        <div className="w-px h-5 bg-studio-border"></div>
+        <div className="w-px h-5 bg-studio-borderHighlight"></div>
 
-        {/* Before / After toggle */}
+        {/* Before / After toggle (3D tactile button) */}
         <button
           onClick={() => setCompareActive(!compareActive)}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full font-semibold transition ${
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition ${
             compareActive 
-              ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow' 
-              : 'text-slate-300 hover:text-white hover:bg-studio-800'
+              ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow btn-3d' 
+              : 'text-slate-300 hover:text-white hover:bg-studio-800 keycap-3d'
           }`}
         >
           <ArrowLeftRight className="w-3.5 h-3.5" />
           <span>Before / After</span>
         </button>
 
-        <div className="w-px h-5 bg-studio-border hidden sm:block"></div>
+        <div className="w-px h-5 bg-studio-borderHighlight hidden sm:block"></div>
 
         {/* Quick shortcut indicator */}
         <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-          <span className="px-1.5 py-0.5 rounded bg-studio-800 text-slate-300 border border-studio-border">Drag</span>
+          <span className="px-1.5 py-0.5 rounded-md bg-studio-950 text-slate-200 border border-studio-border shadow-inner font-bold">Space + Drag</span>
           <span>to Pan</span>
         </div>
       </div>

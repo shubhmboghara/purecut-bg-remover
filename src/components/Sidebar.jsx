@@ -30,7 +30,7 @@ export default function Sidebar({ activeTab, onSelectTab }) {
     <aside 
       role="tablist"
       aria-label="Studio Tools"
-      className="w-20 bg-studio-900/90 backdrop-blur-xl border-r border-studio-border flex flex-col items-center py-3 gap-2 z-30 select-none shrink-0"
+      className="w-20 bg-studio-900/90 backdrop-blur-2xl border-r border-studio-borderHighlight flex flex-col items-center py-4 gap-2.5 z-30 select-none shrink-0 shadow-lg"
     >
       {TABS.map((tab) => {
         const Icon = tab.icon;
@@ -43,21 +43,21 @@ export default function Sidebar({ activeTab, onSelectTab }) {
             onClick={() => handleTabClick(tab.id)}
             title={`${tab.label} (Press ${tab.shortcut})`}
             aria-label={`${tab.label} tool tab`}
-            className={`w-[70px] h-[62px] rounded-2xl flex flex-col items-center justify-center gap-1.5 px-1 transition-all duration-200 relative group ${
+            className={`w-[68px] h-[64px] rounded-2xl flex flex-col items-center justify-center gap-1.5 px-1 transition-all duration-200 relative group keycap-3d ${
               isActive 
-                ? 'bg-gradient-to-b from-brand-500/20 to-accent-purple/10 border border-brand-500/80 text-brand-400 font-bold shadow-glow' 
-                : 'border border-transparent text-slate-400 hover:bg-studio-800/80 hover:text-slate-200 font-medium'
+                ? 'bg-gradient-to-b from-brand-500/25 via-studio-800 to-accent-purple/20 border border-brand-500/80 text-brand-300 font-extrabold shadow-glow' 
+                : 'bg-studio-950/60 border border-studio-border/60 text-slate-400 hover:bg-studio-850 hover:text-white font-medium'
             }`}
           >
-            {/* Active Indicator Bar */}
+            {/* Luminous Active Lateral Indicator */}
             {isActive && (
-              <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-gradient-to-b from-brand-400 to-accent-purple shadow-glow"></span>
+              <span className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-1.5 h-7 rounded-r-full bg-gradient-to-b from-brand-400 to-accent-purple shadow-glow"></span>
             )}
-            <Icon className="w-5 h-5 shrink-0 transition transform group-hover:scale-110" />
-            <span className="text-[10px] leading-tight tracking-tight text-center truncate max-w-full">
+            <Icon className="w-5 h-5 shrink-0 transition transform group-hover:scale-115 group-hover:rotate-3" />
+            <span className="text-[10px] leading-tight tracking-tight text-center truncate max-w-full font-bold">
               {tab.label}
             </span>
-            <span className="absolute top-1 right-1.5 text-[8px] font-mono opacity-0 group-hover:opacity-60 transition text-slate-400">
+            <span className="absolute top-1 right-1.5 text-[8px] font-mono opacity-0 group-hover:opacity-70 transition text-brand-300">
               {tab.shortcut}
             </span>
           </button>
