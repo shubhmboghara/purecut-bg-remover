@@ -158,19 +158,24 @@ export default function App() {
     let targetW = originalDims.width;
     let targetH = originalDims.height;
 
+    const maxDimension = Math.max(originalDims.width, originalDims.height);
+
     if (aspectRatio === '1:1') {
-      const size = Math.max(targetW, targetH);
-      targetW = size;
-      targetH = size;
+      targetW = maxDimension;
+      targetH = maxDimension;
     } else if (aspectRatio === '4:5') {
-      targetW = 1080;
-      targetH = 1350;
+      targetH = maxDimension;
+      targetW = Math.round((targetH * 4) / 5);
     } else if (aspectRatio === '9:16') {
-      targetW = 1080;
-      targetH = 1920;
+      targetH = maxDimension;
+      targetW = Math.round((targetH * 9) / 16);
     } else if (aspectRatio === '16:9') {
-      targetW = 1920;
-      targetH = 1080;
+      targetW = maxDimension;
+      targetH = Math.round((targetW * 9) / 16);
+    } else {
+      // 'original' preserves 100% exact native image dimensions
+      targetW = originalDims.width;
+      targetH = originalDims.height;
     }
 
     Object.values(canvasRefs).forEach((ref) => {

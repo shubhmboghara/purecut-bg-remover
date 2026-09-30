@@ -66,7 +66,7 @@ export default function BatchStudio({
 
   // High-Scale 10,000+ Optimization Controls
   const [concurrency, setConcurrency] = useState(2); // 1x safe, 2x turbo, 3x ultra
-  const [maxEdge, setMaxEdge] = useState(2048); // 2048px (fast) or 0 (original)
+  const [maxEdge, setMaxEdge] = useState(0); // 0 (100% Original Native Resolution) or 2048 (fast)
   const [dirHandle, setDirHandle] = useState(null); // Direct-to-Disk Directory Handle
   const [dirName, setDirName] = useState('');
   const [storageStats, setStorageStats] = useState({ count: 0, totalBytes: 0 });
@@ -648,25 +648,27 @@ export default function BatchStudio({
             </button>
           </div>
 
-          {/* Fast Resolution Optimizer */}
+          {/* Fast vs 100% Original Resolution Optimizer */}
           <div className="flex items-center gap-1 bg-studio-900 p-1 rounded-xl border border-studio-border">
             <button
+              onClick={() => setMaxEdge(0)}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
+                maxEdge === 0
+                  ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Preserves 100% exact original camera / photo resolution pixel-for-pixel (Lossless Native)"
+            >
+              <span>⭐ 100% Native HD</span>
+            </button>
+            <button
               onClick={() => setMaxEdge(2048)}
-              className={`px-2.5 py-1 rounded-lg font-medium transition ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
                 maxEdge === 2048 ? 'bg-brand-600 text-white' : 'text-slate-400 hover:text-white'
               }`}
               title="Downscales giant camera RAWs/photos to 2048px (3x faster, cuts memory by 75%)"
             >
               ⚡ Fast (2048px)
-            </button>
-            <button
-              onClick={() => setMaxEdge(0)}
-              className={`px-2.5 py-1 rounded-lg font-medium transition ${
-                maxEdge === 0 ? 'bg-studio-700 text-white' : 'text-slate-400 hover:text-white'
-              }`}
-              title="Keeps full original resolution"
-            >
-              Original HD
             </button>
           </div>
 
