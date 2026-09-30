@@ -3,32 +3,42 @@ import { SunMedium } from 'lucide-react';
 
 export default function ShadowPanel({ shadow, onChangeShadow }) {
   return (
-    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto">
+    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto text-slate-200 custom-scrollbar panel-container">
       <div>
-        <h3 className="text-base font-bold font-display text-white">Studio Shadows</h3>
-        <p className="text-xs text-slate-400 mt-1">Cast photorealistic drop and contact shadows.</p>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center">
+            <SunMedium className="w-4 h-4" />
+          </div>
+          <h3 className="text-base font-bold font-display text-white text-balance">Studio Shadows</h3>
+        </div>
+        <p className="text-xs text-slate-400 text-pretty">
+          Cast photorealistic ground contact and ambient drop shadows.
+        </p>
       </div>
 
       {/* Enable Toggle Switch */}
-      <div className="flex items-center justify-between p-3.5 bg-studio-800 rounded-xl border border-studio-border">
+      <div className="flex items-center justify-between p-4 bg-studio-950 rounded-2xl border border-studio-border">
         <div className="flex items-center gap-2.5">
-          <SunMedium className="w-4 h-4 text-brand-500" />
-          <span className="text-xs font-semibold text-white">Enable Drop Shadow</span>
+          <SunMedium className="w-4 h-4 text-brand-400" />
+          <span className="text-xs font-bold text-white">Enable Drop Shadow</span>
         </div>
-        <input
-          type="checkbox"
-          checked={shadow.enabled}
-          onChange={(e) => onChangeShadow({ ...shadow, enabled: e.target.checked })}
-          className="w-4 h-4 accent-brand-500 cursor-pointer"
-        />
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={shadow.enabled}
+            onChange={(e) => onChangeShadow({ ...shadow, enabled: e.target.checked })}
+            className="sr-only peer"
+          />
+          <div className="w-9 h-5 bg-studio-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-500"></div>
+        </label>
       </div>
 
-      <div className={`flex flex-col gap-4 transition ${shadow.enabled ? 'opacity-100' : 'opacity-30 pointer-events-none'}`}>
-        {/* Blur */}
-        <div>
+      <div className={`flex flex-col gap-4 transition-all duration-200 ${shadow.enabled ? 'opacity-100' : 'opacity-35 pointer-events-none'}`}>
+        {/* Softness / Blur */}
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
           <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
-            <span>Shadow Softness / Blur</span>
-            <span className="text-brand-500">{shadow.blur}px</span>
+            <span>Shadow Softness (Blur)</span>
+            <span className="text-brand-400 font-bold">{shadow.blur}px</span>
           </div>
           <input
             type="range"
@@ -40,10 +50,10 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
         </div>
 
         {/* Opacity */}
-        <div>
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
           <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
             <span>Shadow Opacity</span>
-            <span className="text-brand-500">{Math.round(shadow.opacity * 100)}%</span>
+            <span className="text-brand-400 font-bold">{Math.round(shadow.opacity * 100)}%</span>
           </div>
           <input
             type="range"
@@ -55,10 +65,10 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
         </div>
 
         {/* Offset Y */}
-        <div>
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
           <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
-            <span>Offset Y (Height)</span>
-            <span className="text-brand-500">{shadow.offsetY}px</span>
+            <span>Height Offset (Y)</span>
+            <span className="text-brand-400 font-bold">{shadow.offsetY}px</span>
           </div>
           <input
             type="range"
@@ -70,10 +80,10 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
         </div>
 
         {/* Offset X */}
-        <div>
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
           <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
-            <span>Offset X (Light Angle)</span>
-            <span className="text-brand-500">{shadow.offsetX}px</span>
+            <span>Light Angle (Offset X)</span>
+            <span className="text-brand-400 font-bold">{shadow.offsetX}px</span>
           </div>
           <input
             type="range"
@@ -85,16 +95,20 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
         </div>
 
         {/* Shadow Color Tint */}
-        <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-2">Shadow Color Tint</label>
-          <div className="flex items-center gap-3 p-2 bg-studio-800 rounded-lg border border-studio-border">
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
+            Shadow Color Tint
+          </label>
+          <div className="flex items-center gap-3 p-2 bg-studio-900 rounded-xl border border-studio-border">
             <input
               type="color"
               value={shadow.color || '#000000'}
               onChange={(e) => onChangeShadow({ ...shadow, color: e.target.value })}
-              className="w-8 h-8 rounded cursor-pointer bg-transparent border-0"
+              className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
             />
-            <span className="font-mono text-xs text-slate-200 uppercase">{shadow.color || '#000000'}</span>
+            <span className="font-mono text-xs text-white uppercase font-bold tracking-wider">
+              {shadow.color || '#000000'}
+            </span>
           </div>
         </div>
       </div>

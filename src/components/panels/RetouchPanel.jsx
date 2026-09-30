@@ -10,7 +10,6 @@ import {
   Sliders, 
   Layers, 
   Sun, 
-  ShieldAlert, 
   ChevronDown, 
   ChevronUp,
   RefreshCw
@@ -37,33 +36,33 @@ export default function RetouchPanel({
   const [showRefineAccordion, setShowRefineAccordion] = useState(true);
 
   return (
-    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto text-slate-200">
+    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto text-slate-200 custom-scrollbar panel-container">
       <div>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center">
             <Scissors className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold font-display text-white">Cutout & Retouch Studio</h3>
+          <h3 className="text-base font-bold font-display text-white text-balance">Cutout & Retouch Lab</h3>
         </div>
-        <p className="text-xs text-slate-400 mt-1">
-          Eliminate stubborn backgrounds, shadow residue, and edge halos with smart tools.
+        <p className="text-xs text-slate-400 text-pretty">
+          Surgically eliminate stubborn backgrounds, shadow residue, and color halos with smart tools.
         </p>
       </div>
 
       {/* 4 Tool Selectors */}
       <div>
-        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+        <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
           Select Retouch Tool
         </label>
-        <div className="grid grid-cols-2 gap-2 p-1 bg-studio-800/80 rounded-xl border border-studio-border">
+        <div className="grid grid-cols-2 gap-2 p-1 bg-studio-950/80 rounded-2xl border border-studio-border">
           {/* Magic Wand */}
           <button
             type="button"
             onClick={() => onChangeTool('wand')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
               activeTool === 'wand'
-                ? 'bg-gradient-to-r from-brand-500 to-purple-600 text-white shadow-glow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-700/60'
+                ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow'
+                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
             }`}
           >
             <Wand2 className="w-3.5 h-3.5" />
@@ -74,10 +73,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('lasso')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
               activeTool === 'lasso'
-                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-700/60'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-glow-purple'
+                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
             }`}
           >
             <Lasso className="w-3.5 h-3.5" />
@@ -88,10 +87,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('erase')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
               activeTool === 'erase'
-                ? 'bg-red-500 text-white shadow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-700/60'
+                ? 'bg-accent-rose text-white shadow'
+                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
             }`}
           >
             <Eraser className="w-3.5 h-3.5" />
@@ -102,10 +101,10 @@ export default function RetouchPanel({
           <button
             type="button"
             onClick={() => onChangeTool('restore')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold transition ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition ${
               activeTool === 'restore'
-                ? 'bg-emerald-500 text-white shadow'
-                : 'text-slate-300 hover:text-white hover:bg-studio-700/60'
+                ? 'bg-accent-emerald text-white shadow'
+                : 'text-slate-300 hover:text-white hover:bg-studio-850/60'
             }`}
           >
             <Paintbrush className="w-3.5 h-3.5" />
@@ -116,23 +115,23 @@ export default function RetouchPanel({
 
       {/* Active Tool Specific Settings */}
       {activeTool === 'wand' && (
-        <div className="p-3.5 rounded-xl bg-studio-950 border border-brand-500/40 space-y-3 animate-fade-in">
+        <div className="p-4 rounded-2xl bg-studio-950 border border-brand-500/40 space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-white flex items-center gap-1.5">
+            <span className="font-bold text-white flex items-center gap-1.5">
               <Wand2 className="w-3.5 h-3.5 text-brand-400" />
               Magic Wand Settings
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 font-bold">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-bold border border-brand-500/30">
               CLICK TO PURGE
             </span>
           </div>
 
-          <p className="text-[11px] text-slate-300 leading-relaxed">
-            Click anywhere on remaining background (like asphalt under cars or corners) to instantly vaporize that color.
+          <p className="text-[11px] text-slate-300 leading-relaxed text-pretty">
+            Click anywhere on stubborn background pixels (such as asphalt or corners) to instantly vaporize that color range.
           </p>
 
           <div>
-            <div className="flex justify-between text-xs text-slate-300 mb-1">
+            <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
               <span>Color Tolerance</span>
               <span className="text-brand-400 font-bold">{wand.tolerance}</span>
             </div>
@@ -142,16 +141,15 @@ export default function RetouchPanel({
               max="90"
               value={wand.tolerance}
               onChange={(e) => onChangeWand({ ...wand, tolerance: parseInt(e.target.value, 10) })}
-              className="w-full"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
+            <div className="flex justify-between text-[10px] text-slate-500 mt-1">
               <span>Precise (5)</span>
               <span>Aggressive (90)</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-1 border-t border-studio-border/60">
-            <span className="text-xs text-slate-300">Contiguous Area Only</span>
+          <div className="flex items-center justify-between pt-2 border-t border-studio-border/60">
+            <span className="text-xs text-slate-300 font-medium">Contiguous Island Only</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -159,32 +157,32 @@ export default function RetouchPanel({
                 onChange={(e) => onChangeWand({ ...wand, contiguous: e.target.checked })}
                 className="sr-only peer"
               />
-              <div className="w-8 h-4 bg-studio-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-brand-500"></div>
+              <div className="w-9 h-5 bg-studio-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-500"></div>
             </label>
           </div>
         </div>
       )}
 
       {activeTool === 'lasso' && (
-        <div className="p-3.5 rounded-xl bg-studio-950 border border-purple-500/40 space-y-3 animate-fade-in">
+        <div className="p-4 rounded-2xl bg-studio-950 border border-purple-500/40 space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-white flex items-center gap-1.5">
-              <Lasso className="w-3.5 h-3.5 text-purple-400" />
+            <span className="font-bold text-white flex items-center gap-1.5">
+              <Lasso className="w-3.5 h-3.5 text-accent-purple" />
               Lasso Cutout Settings
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
               FREEHAND LOOP
             </span>
           </div>
 
-          <p className="text-[11px] text-slate-300 leading-relaxed">
-            Drag on the canvas to draw a loop around any stubborn background chunk. Releasing the mouse immediately cuts it out.
+          <p className="text-[11px] text-slate-300 leading-relaxed text-pretty">
+            Drag on the canvas to draw a loop around any stubborn background chunk. Releasing the mouse instantly clears it out.
           </p>
 
           <div>
-            <div className="flex justify-between text-xs text-slate-300 mb-1">
+            <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
               <span>Edge Softness (Feather)</span>
-              <span className="text-purple-400 font-bold">{lasso.feather}px</span>
+              <span className="text-accent-purple font-bold">{lasso.feather}px</span>
             </div>
             <input
               type="range"
@@ -192,19 +190,17 @@ export default function RetouchPanel({
               max="8"
               value={lasso.feather}
               onChange={(e) => onChangeLasso({ ...lasso, feather: parseInt(e.target.value, 10) })}
-              className="w-full"
             />
           </div>
         </div>
       )}
 
       {(activeTool === 'erase' || activeTool === 'restore') && (
-        <div className="space-y-4 animate-fade-in">
-          {/* Brush Radius */}
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border space-y-4">
           <div>
-            <div className="flex justify-between text-xs text-slate-300 mb-1 font-semibold">
+            <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
               <span>Brush Radius</span>
-              <span className={activeTool === 'erase' ? 'text-red-400' : 'text-emerald-400'}>
+              <span className={`font-bold ${activeTool === 'erase' ? 'text-accent-rose' : 'text-accent-emerald'}`}>
                 {brush.size}px
               </span>
             </div>
@@ -214,15 +210,13 @@ export default function RetouchPanel({
               max="150"
               value={brush.size}
               onChange={(e) => onChangeBrush({ ...brush, size: parseInt(e.target.value, 10) })}
-              className="w-full"
             />
           </div>
 
-          {/* Brush Feather */}
           <div>
-            <div className="flex justify-between text-xs text-slate-300 mb-1 font-semibold">
-              <span>Edge Softness</span>
-              <span className={activeTool === 'erase' ? 'text-red-400' : 'text-emerald-400'}>
+            <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
+              <span>Edge Softness (Feather)</span>
+              <span className={`font-bold ${activeTool === 'erase' ? 'text-accent-rose' : 'text-accent-emerald'}`}>
                 {brush.feather}%
               </span>
             </div>
@@ -232,18 +226,17 @@ export default function RetouchPanel({
               max="100"
               value={brush.feather}
               onChange={(e) => onChangeBrush({ ...brush, feather: parseInt(e.target.value, 10) })}
-              className="w-full"
             />
           </div>
         </div>
       )}
 
       {/* AI Sensitivity & Edge Refinement Accordion */}
-      <div className="rounded-xl bg-studio-950 border border-studio-border overflow-hidden">
+      <div className="rounded-2xl bg-studio-950 border border-studio-border overflow-hidden">
         <button
           type="button"
           onClick={() => setShowRefineAccordion(!showRefineAccordion)}
-          className="w-full p-3.5 flex items-center justify-between text-left hover:bg-studio-900 transition"
+          className="w-full p-4 flex items-center justify-between text-left hover:bg-studio-900 transition"
         >
           <div className="flex items-center gap-2">
             <Sliders className="w-4 h-4 text-brand-400" />
@@ -257,10 +250,9 @@ export default function RetouchPanel({
         </button>
 
         {showRefineAccordion && (
-          <div className="p-3.5 pt-0 space-y-4 border-t border-studio-border/50 text-xs">
-            {/* Background Cutoff Threshold */}
+          <div className="p-4 pt-0 space-y-4 border-t border-studio-border/50 text-xs">
             <div>
-              <div className="flex justify-between text-slate-300 mb-1">
+              <div className="flex justify-between text-slate-300 mb-1.5 font-semibold">
                 <span>AI Cutoff Sensitivity</span>
                 <span className="text-brand-400 font-bold">{refine.threshold}%</span>
               </div>
@@ -274,19 +266,17 @@ export default function RetouchPanel({
                   onChangeRefine({ ...refine, threshold: val });
                   if (onApplyRefine) onApplyRefine({ ...refine, threshold: val });
                 }}
-                className="w-full"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
+              <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                 <span>Gentle / Keep Hair (5%)</span>
                 <span>Aggressive Cutoff (95%)</span>
               </div>
             </div>
 
-            {/* Edge Choke / Halo Shaver */}
             <div>
-              <div className="flex justify-between text-slate-300 mb-1">
+              <div className="flex justify-between text-slate-300 mb-1.5 font-semibold">
                 <span>Edge Choke (Shave Halos)</span>
-                <span className="text-purple-400 font-bold">
+                <span className="text-accent-purple font-bold">
                   {refine.choke > 0 ? `-${refine.choke}px` : refine.choke < 0 ? `+${Math.abs(refine.choke)}px` : '0px'}
                 </span>
               </div>
@@ -301,10 +291,9 @@ export default function RetouchPanel({
                   onChangeRefine({ ...refine, choke: val });
                   if (onApplyRefine) onApplyRefine({ ...refine, choke: val });
                 }}
-                className="w-full"
               />
-              <p className="text-[10px] text-slate-400 mt-1">
-                Contracts edge inwards to completely delete white outline halos around subjects.
+              <p className="text-[10px] text-slate-400 mt-1.5 text-pretty">
+                Contracts edge inwards to completely eliminate light outline halos around subjects.
               </p>
             </div>
           </div>
@@ -313,7 +302,7 @@ export default function RetouchPanel({
 
       {/* One-Click Smart Actions */}
       <div className="space-y-2">
-        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+        <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
           One-Click Smart Fixes
         </label>
 
@@ -321,13 +310,13 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onPurgeFloorShadows}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-studio-800 hover:bg-studio-700/80 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
-            <span className="font-medium">Purge Lingering Floor Shadows</span>
+            <span className="font-semibold">Purge Floor Shadows</span>
           </div>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-studio-900 text-slate-400 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-studio-850 text-slate-300 font-semibold border border-studio-border">
             Auto
           </span>
         </button>
@@ -336,13 +325,13 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onCleanStrayIslands}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-studio-800 hover:bg-studio-700/80 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-brand-400" />
-            <span className="font-medium">Clean Floating Islands & Specks</span>
+            <span className="font-semibold">Clean Floating Specks</span>
           </div>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-studio-900 text-slate-400 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-studio-850 text-slate-300 font-semibold border border-studio-border">
             Auto
           </span>
         </button>
@@ -351,13 +340,13 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onDefringeEdges}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-studio-800 hover:bg-studio-700/80 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
         >
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-cyan-400" />
-            <span className="font-medium">Decontaminate & Defringe Color</span>
+          <div className="flex items-center gap-2.5">
+            <Layers className="w-4 h-4 text-accent-cyan" />
+            <span className="font-semibold">Decontaminate & Defringe</span>
           </div>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-studio-900 text-slate-400 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-studio-850 text-slate-300 font-semibold border border-studio-border">
             Anti-Spill
           </span>
         </button>
@@ -366,13 +355,13 @@ export default function RetouchPanel({
         <button
           type="button"
           onClick={onInvertMask}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-studio-800 hover:bg-studio-700/80 border border-studio-border text-xs text-white transition group"
+          className="w-full flex items-center justify-between p-3 rounded-2xl bg-studio-950 hover:bg-studio-850 border border-studio-border text-xs text-white transition group"
         >
-          <div className="flex items-center gap-2">
-            <RefreshCw className="w-4 h-4 text-purple-400" />
-            <span className="font-medium">Invert Subject / Background</span>
+          <div className="flex items-center gap-2.5">
+            <RefreshCw className="w-4 h-4 text-accent-purple" />
+            <span className="font-semibold">Invert Subject & Background</span>
           </div>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-studio-900 text-slate-400 font-semibold">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-studio-850 text-slate-300 font-semibold border border-studio-border">
             Swap
           </span>
         </button>
@@ -382,7 +371,7 @@ export default function RetouchPanel({
       <button
         type="button"
         onClick={onResetMask}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-semibold text-slate-300 hover:text-white border border-studio-border transition"
+        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-studio-850 hover:bg-studio-800 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition"
       >
         <RotateCcw className="w-4 h-4 text-brand-400" />
         <span>Revert to Pristine AI Cutout</span>

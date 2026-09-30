@@ -1,19 +1,26 @@
 import React from 'react';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Sliders } from 'lucide-react';
 
 export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }) {
   return (
-    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto">
+    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto text-slate-200 custom-scrollbar panel-container">
       <div>
-        <h3 className="text-base font-bold font-display text-white">Lighting & Color</h3>
-        <p className="text-xs text-slate-400 mt-1">Blend the subject seamlessly with your background.</p>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center">
+            <Sliders className="w-4 h-4" />
+          </div>
+          <h3 className="text-base font-bold font-display text-white text-balance">Lighting & Color</h3>
+        </div>
+        <p className="text-xs text-slate-400 text-pretty">
+          Harmonize cutout lighting, contrast, and warmth with your backdrop.
+        </p>
       </div>
 
       {/* Brightness */}
-      <div>
+      <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
         <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
           <span>Brightness</span>
-          <span className="text-brand-500">{filters.brightness}%</span>
+          <span className="text-brand-400 font-bold">{filters.brightness}%</span>
         </div>
         <input
           type="range"
@@ -25,10 +32,10 @@ export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }
       </div>
 
       {/* Contrast */}
-      <div>
+      <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
         <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
           <span>Contrast</span>
-          <span className="text-brand-500">{filters.contrast}%</span>
+          <span className="text-brand-400 font-bold">{filters.contrast}%</span>
         </div>
         <input
           type="range"
@@ -40,10 +47,10 @@ export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }
       </div>
 
       {/* Saturation */}
-      <div>
+      <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
         <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
           <span>Color Saturation</span>
-          <span className="text-brand-500">{filters.saturation}%</span>
+          <span className="text-brand-400 font-bold">{filters.saturation}%</span>
         </div>
         <input
           type="range"
@@ -55,10 +62,10 @@ export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }
       </div>
 
       {/* Warmth / Temperature */}
-      <div>
+      <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border">
         <div className="flex justify-between text-xs text-slate-300 mb-1.5 font-semibold">
           <span>Temperature / Warmth</span>
-          <span className="text-brand-500">{filters.warmth}</span>
+          <span className="text-brand-400 font-bold">{filters.warmth}</span>
         </div>
         <input
           type="range"
@@ -71,9 +78,9 @@ export default function AdjustPanel({ filters, onChangeFilters, onResetFilters }
 
       <button
         onClick={onResetFilters}
-        className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-semibold text-slate-200 border border-studio-border transition mt-2"
+        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-studio-850 hover:bg-studio-800 text-xs font-bold text-slate-200 hover:text-white border border-studio-border transition shadow-sm mt-1"
       >
-        <RotateCcw className="w-4 h-4" />
+        <RotateCcw className="w-4 h-4 text-brand-400" />
         <span>Reset Adjustments</span>
       </button>
     </div>

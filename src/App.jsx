@@ -627,19 +627,37 @@ export default function App() {
     showToast('Reverted to pristine AI cutout');
   }, [pushHistory, renderAll, showToast]);
 
-  // Keyboard Shortcuts (Ctrl+Z, Ctrl+Y, [, ])
+  // Keyboard Shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+E, 1-6, [, ])
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      // Don't intercept if user is typing in an input
+      if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault();
         handleUndo();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+      } else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
         e.preventDefault();
         handleRedo();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
+        if (originalSrc) {
+          e.preventDefault();
+          setIsExportOpen(true);
+        }
       } else if (e.key === '[') {
         setBrush((b) => ({ ...b, size: Math.max(4, b.size - 4) }));
       } else if (e.key === ']') {
         setBrush((b) => ({ ...b, size: Math.min(120, b.size + 4) }));
+      } else if (['1', '2', '3', '4', '5', '6'].includes(e.key) && !e.ctrlKey && !e.metaKey) {
+        const tabMap = {
+          '1': 'background',
+          '2': 'retouch',
+          '3': 'transform',
+          '4': 'shadow',
+          '5': 'adjust',
+          '6': 'canvas'
+        };
+        if (tabMap[e.key]) setActiveTab(tabMap[e.key]);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -707,8 +725,8 @@ export default function App() {
             {/* Leftmost Tool Strip */}
             <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
 
-            {/* Sub-Panel Controls */}
-            <aside className="w-80 bg-studio-900 border-r border-studio-border flex flex-col z-25 overflow-hidden">
+            {/* Sub-Panel Controls with Container Queries and Glassmorphism */}
+            <aside className="w-80 bg-studio-900/90 backdrop-blur-xl border-r border-studio-border flex flex-col z-25 overflow-hidden panel-container">
               {activeTab === 'background' && (
                 <BackgroundPanel background={background} onChangeBackground={setBackground} />
               )}
@@ -819,11 +837,22 @@ export default function App() {
         onShowToast={showToast}
       />
 
-      {/* Toast Alert Notification */}
+      {/* Accessible Glassmorphic Toast Notification */}
       {toast.visible && (
-        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl bg-studio-800 border border-brand-500/40 text-white shadow-studio flex items-center gap-2.5 text-xs font-semibold animate-bounce-short">
-          <span className={`w-2 h-2 rounded-full ${toast.isError ? 'bg-red-500' : 'bg-emerald-400'}`}></span>
-          <span>{toast.message}</span>
+        <div 
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl bg-studio-900/90 backdrop-blur-2xl border border-studio-borderHighlight text-white shadow-studio flex items-center gap-3 text-xs font-semibold animate-shimmer"
+        >
+          <span className={`w-2.5 h-2.5 rounded-full ${toast.isError ? 'bg-accent-rose shadow-[0_0_8px_#f43f5e]' : 'bg-accent-emerald shadow-[0_0_8px_#10b981]'}`}></span>
+          <span className="text-slate-100">{toast.message}</span>
+          <button
+            onClick={() => setToast({ visible: false, message: '', isError: false })}
+            className="ml-1 text-slate-400 hover:text-white"
+            aria-label="Dismiss message"
+          >
+            ✕
+          </button>
         </div>
       )}
     </div>

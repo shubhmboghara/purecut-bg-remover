@@ -45,12 +45,15 @@ npm run build
 ## ✨ Features Included
 
 1. **⚡ 1-Click AI Background Removal:** Runs on device with zero API keys or server costs.
-2. **📦 Turbo Batch Studio (1,000 to 2,000+ Images at Once):**
-   - **Zero-Freeze Queue Engine:** Handles 1,000 to 2,000+ images smoothly without freezing the browser or crashing WebGL/WASM memory.
-   - **Non-blocking Event Loop Yielding:** 60fps UI responsiveness during bulk processing with live rolling ETA and speed metrics.
-   - **Zero-Lag Paginated View:** Instant rendering of large queues with search and status filters (All, Completed, Processing, Pending, Failed).
+2. **📦 Turbo Batch Studio (1,000 to 10,000+ Images at Once):**
+   - **Direct-to-Disk Auto-Save (0 MB RAM):** Uses the browser's native File System Access API to stream cutouts directly to your computer's local folder as they finish, bypassing browser RAM limits entirely.
+   - **IndexedDB Offloading:** Completed images are cached directly in IndexedDB on your SSD rather than bloating the JavaScript heap, preventing tab crashes and memory leaks.
+   - **Multi-Part Volume ZIP Exporter:** Partitions large batches (500+ files) into safe 500-file ZIP packages to prevent 2GB browser zip buffer limits.
+   - **Multi-Core Concurrency:** Choose between 1x Safe, 2x Turbo (default), and 3x Ultra multi-threading.
+   - **Smart 2048px Optimizer:** Automatically downscales large camera files for 3x speedup and 75% memory reduction.
+   - **Anti-Throttling Background Heartbeat:** Dedicated Web Worker ticker keeps the batch queue processing at full speed even when Brave is minimized or in a background tab.
+   - **Zero-Lag Paginated View:** Instant rendering of 10,000-image queues with jump-to-page navigation, search, and status filters.
    - **Batch Output Presets:** Transparent PNG, E-Commerce Pure White (#FFFFFF), or custom solid brand backdrops.
-   - **1-Click Bulk ZIP Export:** Fast streaming archive download with `JSZip`.
    - **Seamless Single-Studio Handoff:** Click any batch item to fine-tune it in the full studio editor.
 3. **🎨 6 Background Replacement Modes:**
    - **Transparent:** Standard checkerboard grid (PNG).

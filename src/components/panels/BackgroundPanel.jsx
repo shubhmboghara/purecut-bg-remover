@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { UploadCloud, CheckCircle2, Trash2 } from 'lucide-react';
+import { UploadCloud, CheckCircle2, Trash2, Check, Sparkles, Image as ImageIcon } from 'lucide-react';
 
 const PALETTE = [
-  '#ffffff', '#f3f4f6', '#0f172a', '#000000',
-  '#2563eb', '#06b6d4', '#10b981', '#f59e0b',
+  '#ffffff', '#f8fafc', '#0f172a', '#000000',
+  '#3b82f6', '#06b6d4', '#10b981', '#f59e0b',
   '#ef4444', '#8b5cf6', '#ec4899', '#ffedd5'
 ];
 
@@ -59,29 +59,36 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
   };
 
   return (
-    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto">
+    <div className="p-5 flex flex-col gap-5 select-none overflow-y-auto text-slate-200 custom-scrollbar panel-container">
       <div>
-        <h3 className="text-base font-bold font-display text-white">Replace Background</h3>
-        <p className="text-xs text-slate-400 mt-1">Select solid, gradient, photo preset or upload your own.</p>
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center">
+            <ImageIcon className="w-4 h-4" />
+          </div>
+          <h3 className="text-base font-bold font-display text-white text-balance">Replace Background</h3>
+        </div>
+        <p className="text-xs text-slate-400 text-pretty">
+          Choose solid colors, curated studio gradients, realistic scenes, or upload custom backdrops.
+        </p>
       </div>
 
-      {/* Category Pills */}
-      <div className="flex flex-wrap gap-1.5">
+      {/* Category Tabs */}
+      <div className="grid grid-cols-3 gap-1.5 p-1 bg-studio-950/80 rounded-2xl border border-studio-border">
         {[
           { id: 'transparent', label: 'Transparent' },
           { id: 'color', label: 'Solid' },
           { id: 'gradient', label: 'Gradient' },
-          { id: 'photos', label: 'Studio Photos' },
-          { id: 'blur', label: 'Bokeh Blur' },
+          { id: 'photos', label: 'Scenes' },
+          { id: 'blur', label: 'Bokeh' },
           { id: 'custom', label: 'Upload' }
         ].map((cat) => (
           <button
             key={cat.id}
             onClick={() => onChangeBackground({ ...background, type: cat.id })}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+            className={`py-1.5 px-2 rounded-xl text-xs font-semibold transition text-center ${
               background.type === cat.id
-                ? 'bg-brand-500 text-white font-semibold'
-                : 'bg-studio-800 text-slate-300 hover:bg-studio-700'
+                ? 'bg-gradient-to-r from-brand-500 to-accent-purple text-white shadow-glow'
+                : 'text-slate-400 hover:text-white hover:bg-studio-800/60'
             }`}
           >
             {cat.label}
@@ -89,84 +96,109 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
         ))}
       </div>
 
-      {/* Subview: Transparent */}
+      {/* Transparent View */}
       {background.type === 'transparent' && (
-        <div className="p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 flex items-start gap-2.5">
-          <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
-          <p>Transparent PNG background is active. Perfect for e-commerce, logos, stickers, and graphics.</p>
+        <div className="p-4 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 flex items-start gap-3">
+          <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
+          <p className="leading-relaxed text-pretty">
+            Transparent PNG alpha cutout is active. Ideal for logos, e-commerce product catalogs, stickers, and design assets.
+          </p>
         </div>
       )}
 
-      {/* Subview: Solid Color */}
+      {/* Solid Color View */}
       {background.type === 'color' && (
         <div className="flex flex-col gap-4">
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-2">Custom Color</label>
-            <div className="flex items-center gap-3 p-2 bg-studio-800 rounded-lg border border-studio-border">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
+              Color Selector
+            </label>
+            <div className="flex items-center gap-3 p-2.5 bg-studio-950 rounded-2xl border border-studio-border">
               <input
                 type="color"
                 value={background.color || '#ffffff'}
                 onChange={(e) => onChangeBackground({ ...background, color: e.target.value })}
-                className="w-8 h-8 rounded cursor-pointer bg-transparent border-0"
+                className="w-8 h-8 rounded-xl cursor-pointer bg-transparent border-0"
               />
-              <span className="font-mono text-xs text-slate-200 uppercase">{background.color || '#ffffff'}</span>
+              <span className="font-mono text-xs text-white uppercase font-bold tracking-wider">
+                {background.color || '#ffffff'}
+              </span>
             </div>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-2">Studio Palette</label>
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
+              Studio Palette
+            </label>
             <div className="grid grid-cols-6 gap-2">
-              {PALETTE.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => onChangeBackground({ ...background, color: c })}
-                  style={{ backgroundColor: c }}
-                  className={`w-full aspect-square rounded-lg border-2 transition transform hover:scale-105 ${
-                    background.color === c ? 'border-brand-500 scale-105 shadow-glow' : 'border-transparent'
-                  }`}
-                />
-              ))}
+              {PALETTE.map((c) => {
+                const isSelected = background.color === c;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => onChangeBackground({ ...background, color: c })}
+                    style={{ backgroundColor: c }}
+                    className={`w-full aspect-square rounded-xl border-2 transition transform hover:scale-105 flex items-center justify-center ${
+                      isSelected ? 'border-brand-500 scale-105 shadow-glow' : 'border-transparent'
+                    }`}
+                  >
+                    {isSelected && (
+                      <Check className={`w-3.5 h-3.5 ${c === '#ffffff' || c === '#f8fafc' ? 'text-slate-900' : 'text-white'}`} />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
 
-      {/* Subview: Gradient */}
+      {/* Gradients View */}
       {background.type === 'gradient' && (
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-slate-300 mb-1">Curated Gradients</label>
+        <div className="flex flex-col gap-2.5">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Curated Studio Gradients
+          </label>
           <div className="grid grid-cols-2 gap-2.5">
             {GRADIENTS.map((g) => (
               <button
                 key={g.name}
                 onClick={() => onChangeBackground({ ...background, gradient: g.val })}
                 style={{ background: g.val }}
-                className={`h-16 rounded-xl border-2 flex items-end p-2 transition transform hover:-translate-y-0.5 ${
+                className={`h-20 rounded-2xl border-2 flex items-end p-2.5 transition transform hover:-translate-y-0.5 relative overflow-hidden group ${
                   background.gradient === g.val ? 'border-white shadow-glow' : 'border-transparent'
                 }`}
               >
-                <span className="text-[11px] font-bold text-white drop-shadow">{g.name}</span>
+                <span className="text-[11px] font-bold text-white drop-shadow-md">
+                  {g.name}
+                </span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Subview: Studio Photos */}
+      {/* Studio Photos View */}
       {background.type === 'photos' && (
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold text-slate-300 mb-1">Studio Scenes</label>
+        <div className="flex flex-col gap-2.5">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Realistic Scenes
+          </label>
           <div className="grid grid-cols-2 gap-2.5">
             {PHOTOS.map((p) => (
               <button
                 key={p.name}
                 onClick={() => onChangeBackground({ ...background, photoUrl: p.url, cachedPhoto: null })}
-                className={`relative h-20 rounded-xl overflow-hidden border-2 transition group ${
+                className={`relative h-24 rounded-2xl overflow-hidden border-2 transition group ${
                   background.photoUrl === p.url ? 'border-brand-500 shadow-glow' : 'border-transparent'
                 }`}
               >
-                <img src={p.url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-300" />
-                <span className="absolute inset-x-0 bottom-0 p-1.5 bg-gradient-to-t from-black/80 text-[11px] font-semibold text-white">
+                <img
+                  src={p.url}
+                  alt={p.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                />
+                <span className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/85 via-black/50 to-transparent text-[11px] font-bold text-white truncate">
                   {p.name}
                 </span>
               </button>
@@ -175,36 +207,35 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
         </div>
       )}
 
-      {/* Subview: Bokeh Blur */}
+      {/* Bokeh Blur View */}
       {background.type === 'blur' && (
-        <div className="flex flex-col gap-3">
-          <label className="text-xs font-semibold text-slate-300">DSLR Aperture Bokeh Blur</label>
-          <p className="text-xs text-slate-400">Blurs original photo background to create realistic portrait depth.</p>
-          <div className="mt-2">
-            <div className="flex justify-between text-xs text-slate-400 mb-1">
-              <span>Blur Radius</span>
-              <span className="text-brand-500 font-semibold">{background.blurRadius || 16}px</span>
-            </div>
-            <input
-              type="range"
-              min="2"
-              max="50"
-              value={background.blurRadius || 16}
-              onChange={(e) => onChangeBackground({ ...background, blurRadius: parseInt(e.target.value, 10) })}
-            />
+        <div className="p-4 rounded-2xl bg-studio-950 border border-studio-border space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-white">DSLR Aperture Bokeh Blur</span>
+            <span className="text-xs font-bold text-brand-400">{background.blurRadius || 16}px</span>
           </div>
+          <p className="text-xs text-slate-400 text-pretty">
+            Blurs original backdrop to achieve cinematic portrait depth of field.
+          </p>
+          <input
+            type="range"
+            min="2"
+            max="50"
+            value={background.blurRadius || 16}
+            onChange={(e) => onChangeBackground({ ...background, blurRadius: parseInt(e.target.value, 10) })}
+          />
         </div>
       )}
 
-      {/* Subview: Custom Image Upload */}
+      {/* Custom Image Upload */}
       {background.type === 'custom' && (
         <div className="flex flex-col gap-3">
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="p-6 border-2 border-dashed border-studio-border hover:border-brand-500 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer bg-studio-800/40 hover:bg-brand-500/5 transition"
+            className="p-6 border-2 border-dashed border-studio-border hover:border-brand-500 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer bg-studio-950 hover:bg-brand-500/5 transition"
           >
-            <UploadCloud className="w-8 h-8 text-brand-500" />
-            <span className="text-xs font-semibold text-slate-200">Click to upload background photo</span>
+            <UploadCloud className="w-8 h-8 text-brand-400" />
+            <span className="text-xs font-semibold text-slate-200">Upload background photo</span>
             <input
               ref={fileInputRef}
               type="file"
@@ -215,11 +246,11 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
           </div>
 
           {background.customPreviewUrl && (
-            <div className="relative rounded-xl overflow-hidden border border-studio-border">
-              <img src={background.customPreviewUrl} alt="Custom Background" className="w-full h-28 object-cover" />
+            <div className="relative rounded-2xl overflow-hidden border border-studio-border">
+              <img src={background.customPreviewUrl} alt="Custom Background" className="w-full h-32 object-cover" />
               <button
                 onClick={() => onChangeBackground({ ...background, customImage: null, customPreviewUrl: null, type: 'transparent' })}
-                className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-600/80 hover:bg-red-600 text-white text-xs transition"
+                className="absolute top-2 right-2 p-1.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white text-xs transition shadow-sm"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
