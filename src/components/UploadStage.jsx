@@ -309,7 +309,7 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
               </div>
               <span className="text-xs font-bold text-white">100% In-Browser Privacy</span>
               <span className="text-[11px] text-slate-400 text-pretty">
-                Zero cloud upload. Your photos never touch external servers.
+                Zero cloud upload. Your photos never leave your device.
               </span>
             </div>
           </Interactive3DCard>
@@ -317,11 +317,11 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
           <Interactive3DCard maxTilt={5}>
             <div className="p-4 rounded-2xl bg-studio-900/70 border border-studio-border backdrop-blur-md flex flex-col gap-2 shadow-lg h-full">
               <div className="w-9 h-9 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 flex items-center justify-center shadow-glow">
-                <Zap className="w-5 h-5" />
+                <Sparkles className="w-5 h-5 text-amber-300" />
               </div>
-              <span className="text-xs font-bold text-white">WASM & WebGPU</span>
+              <span className="text-xs font-bold text-white">100% Resident Resolution</span>
               <span className="text-[11px] text-slate-400 text-pretty">
-                Hardware-accelerated neural networks with SIMD speed.
+                Zero downscaling loss. 100% exact original camera megapixel fidelity.
               </span>
             </div>
           </Interactive3DCard>
@@ -331,9 +331,9 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
               <div className="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 text-accent-purple flex items-center justify-center shadow-glow-purple">
                 <Sliders className="w-5 h-5" />
               </div>
-              <span className="text-xs font-bold text-white">3D Studio Suite</span>
+              <span className="text-xs font-bold text-white">Sub-Pixel Edge Matting</span>
               <span className="text-[11px] text-slate-400 text-pretty">
-                Cast photorealistic ground shadows, bokeh blur & color defringe.
+                Closed-form despill, hair strand feathering & halo shaving.
               </span>
             </div>
           </Interactive3DCard>
@@ -343,9 +343,9 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
               <div className="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-accent-cyan flex items-center justify-center">
                 <Layers className="w-5 h-5" />
               </div>
-              <span className="text-xs font-bold text-white">2,000+ Batch Queue</span>
+              <span className="text-xs font-bold text-white">10,000+ Extreme Batch</span>
               <span className="text-[11px] text-slate-400 text-pretty">
-                Streaming memory pooling with instant bulk ZIP export.
+                Direct-to-Disk auto-save with 0 MB RAM consumption.
               </span>
             </div>
           </Interactive3DCard>
