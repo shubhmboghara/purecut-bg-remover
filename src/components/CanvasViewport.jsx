@@ -6,9 +6,11 @@ import {
   ArrowLeftRight,
   Wand2,
   Sparkles,
-  Command
+  Command,
+  Rotate3D
 } from 'lucide-react';
 import BeforeAfterSlider from './BeforeAfterSlider';
+import ThreeSpatialStage from './ThreeSpatialStage';
 
 export default function CanvasViewport({
   originalImageSrc,
@@ -19,6 +21,7 @@ export default function CanvasViewport({
   wand,
   lasso,
   transform,
+  shadow,
   onChangeTransform,
   onBrushStroke,
   onMagicWand,
@@ -31,6 +34,7 @@ export default function CanvasViewport({
 }) {
   const [zoom, setZoom] = useState(1.0);
   const [compareActive, setCompareActive] = useState(false);
+  const [threeSpatialActive, setThreeSpatialActive] = useState(false);
   const containerRef = useRef(null);
   const wrapperRef = useRef(null);
 
@@ -300,6 +304,18 @@ export default function CanvasViewport({
         <BeforeAfterSlider originalSrc={originalImageSrc} isActive={compareActive} />
       </div>
 
+      {/* Three.js Real-Time 3D Spatial Stage Viewport Mode */}
+      {threeSpatialActive && (
+        <div className="absolute inset-0 z-40 bg-studio-950 flex flex-col">
+          <ThreeSpatialStage
+            mainCanvas={canvasRefs.main.current}
+            bgCanvas={canvasRefs.bg.current}
+            shadow={shadow}
+            onClose={() => setThreeSpatialActive(false)}
+          />
+        </div>
+      )}
+
       {/* 3D Floating Glass Pedestal Toolbar at Bottom */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 px-5 py-2.5 rounded-full pedestal-3d flex items-center gap-3 text-xs shadow-2xl">
         {/* Zoom Controls */}
@@ -352,6 +368,22 @@ export default function CanvasViewport({
         >
           <ArrowLeftRight className="w-3.5 h-3.5" />
           <span>Before / After</span>
+        </button>
+
+        <div className="w-px h-5 bg-studio-borderHighlight"></div>
+
+        {/* Three.js 3D WebGL Orbit Mode button */}
+        <button
+          onClick={() => setThreeSpatialActive(!threeSpatialActive)}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold transition ${
+            threeSpatialActive 
+              ? 'bg-gradient-to-r from-cyan-500 via-brand-500 to-accent-purple text-white shadow-glow btn-3d' 
+              : 'text-slate-300 hover:text-white hover:bg-studio-800 keycap-3d'
+          }`}
+          title="Inspect Cutout in Three.js WebGL 3D Spatial Space"
+        >
+          <Rotate3D className="w-3.5 h-3.5 text-cyan-400" />
+          <span>3D WebGL Orbit</span>
         </button>
 
         <div className="w-px h-5 bg-studio-borderHighlight hidden sm:block"></div>

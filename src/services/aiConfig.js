@@ -10,12 +10,22 @@ export const DEFAULT_AI_CONFIG = {
   // 'local' (In-Browser Neural IS-Net) or 'removebg' (Official Remove.bg Cloud API)
   engine: 'local',
   removeBgApiKey: '',
-  // Local model quality: 'medium' (HD IS-Net) or 'small' (Fast Quantized)
-  quality: 'small',
-  // Remove.bg-style Color Decontamination & Edge Matting
+  // Local model quality: 'medium' (Studio HD IS-Net) or 'small' (Fast Quantized)
+  quality: 'medium',
+  // Resolution preservation: 'original' (100% Native Unscaled) or 'balanced' (2048px max)
+  resolutionMode: 'original',
+  // 100% Studio Result: Remove.bg-grade Color Decontamination & Edge Matting
   edgeDecontaminate: true,
   // Edge feather softness (0 to 4 px)
-  edgeFeather: 1
+  edgeFeather: 1,
+  // Ultra-Precision 100% Result Suite
+  ultraPrecision: true,
+  // Automatic stray background island cleaner
+  autoCleanIslands: true,
+  // Automatic contact shadow attenuation
+  autoCleanShadows: true,
+  // Closed-form color despill weight
+  despillStrength: 0.85
 };
 
 /**

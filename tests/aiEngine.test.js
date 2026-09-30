@@ -8,21 +8,30 @@ describe('AI Configuration & Persistence Engine', () => {
     const config = getAiConfig();
     assert.equal(typeof config, 'object');
     assert.equal(config.engine, 'local');
-    assert.equal(config.quality, DEFAULT_AI_CONFIG.quality);
+    assert.equal(DEFAULT_AI_CONFIG.quality, 'medium', 'Default precision must be HD Full Precision (medium)');
+    assert.equal(config.quality, 'medium', 'getAiConfig must return medium by default');
     assert.equal(config.edgeDecontaminate, true);
     assert.equal(config.edgeFeather, 1);
   });
 
-  it('updates configuration and preserves keys', () => {
+  it('updates configuration and preserves keys, allowing users to toggle quality', () => {
     const updated = saveAiConfig({ engine: 'removebg', removeBgApiKey: 'test_key_123' });
     assert.equal(updated.engine, 'removebg');
     assert.equal(updated.removeBgApiKey, 'test_key_123');
     // Default properties should remain intact
-    assert.equal(updated.quality, DEFAULT_AI_CONFIG.quality);
+    assert.equal(updated.quality, 'medium');
     assert.equal(updated.edgeDecontaminate, true);
 
+    // User can switch quality to small if desired
+    const switchedToSmall = saveAiConfig({ quality: 'small' });
+    assert.equal(switchedToSmall.quality, 'small');
+
+    // User can switch back to medium
+    const switchedToMedium = saveAiConfig({ quality: 'medium' });
+    assert.equal(switchedToMedium.quality, 'medium');
+
     // Reset back
-    saveAiConfig({ engine: 'local', removeBgApiKey: '' });
+    saveAiConfig({ engine: 'local', removeBgApiKey: '', quality: 'medium' });
   });
 });
 

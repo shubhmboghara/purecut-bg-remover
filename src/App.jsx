@@ -799,6 +799,7 @@ export default function App() {
               wand={wand}
               lasso={lasso}
               transform={transform}
+              shadow={shadow}
               onChangeTransform={setTransform}
               onBrushStroke={handleBrushStroke}
               onMagicWand={handleMagicWand}

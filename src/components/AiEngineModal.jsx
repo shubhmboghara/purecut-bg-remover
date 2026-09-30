@@ -9,9 +9,10 @@ import {
   ExternalLink, 
   ShieldCheck, 
   Zap,
-  Info
+  Info,
+  RotateCcw
 } from 'lucide-react';
-import { getAiConfig, saveAiConfig } from '../services/aiConfig';
+import { getAiConfig, saveAiConfig, DEFAULT_AI_CONFIG } from '../services/aiConfig';
 
 export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
   const [config, setConfig] = useState(getAiConfig());
@@ -324,34 +325,70 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
           {/* Local Neural Model Quality */}
           {config.engine === 'local' && (
             <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
-                Local Neural Model Precision
-              </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
+                  Local Neural Model Precision
+                </label>
+                <span className="text-[11px] text-brand-300 font-medium">
+                  Default: HD Full Precision
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setConfig({ ...config, quality: 'medium' })}
-                  className={`p-3 rounded-2xl border text-left transition ${
+                  className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between ${
                     config.quality === 'medium'
-                      ? 'border-brand-500 bg-brand-500/15 text-white'
-                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white'
+                      ? 'border-brand-500 bg-brand-500/15 text-white shadow-glow'
+                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white hover:border-slate-600'
                   }`}
                 >
-                  <p className="font-bold text-xs text-white">HD Full Precision (IS-Net Medium)</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Highest detail for hair strands and fine edges (Recommended).</p>
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <p className="font-bold text-xs text-white">HD Full Precision (IS-Net Medium)</p>
+                      {config.quality === 'medium' && (
+                        <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Highest detail for hair strands and fine edges (Recommended & Default).
+                    </p>
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-bold border border-brand-500/30">
+                      DEFAULT
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
+                      Max Quality
+                    </span>
+                  </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setConfig({ ...config, quality: 'small' })}
-                  className={`p-3 rounded-2xl border text-left transition ${
+                  className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between ${
                     config.quality === 'small'
-                      ? 'border-brand-500 bg-brand-500/15 text-white'
-                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white'
+                      ? 'border-brand-500 bg-brand-500/15 text-white shadow-glow'
+                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white hover:border-slate-600'
                   }`}
                 >
-                  <p className="font-bold text-xs text-white">Ultra-Fast (IS-Net Small Quantized)</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Loads 3x faster, ideal for older laptops and mobile phones.</p>
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <p className="font-bold text-xs text-white">Ultra-Fast (IS-Net Small Quantized)</p>
+                      {config.quality === 'small' && (
+                        <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Loads 3x faster, ideal for older laptops and mobile phones.
+                    </p>
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-semibold">
+                      Fastest
+                    </span>
+                  </div>
                 </button>
               </div>
             </div>
@@ -402,13 +439,22 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-studio-border bg-studio-950/80 flex items-center justify-between">
+        <div className="p-4 border-t border-studio-border bg-studio-950/80 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>Settings stored safely in local browser storage</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setConfig({ ...DEFAULT_AI_CONFIG })}
+              className="px-3 py-2 rounded-xl bg-studio-800 hover:bg-studio-700 text-xs font-medium text-slate-300 hover:text-white transition flex items-center gap-1.5"
+              title="Reset all settings to recommended defaults"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Defaults</span>
+            </button>
             <button
               onClick={onClose}
               className="px-4 py-2 rounded-xl btn-3d-secondary text-xs font-semibold text-slate-300 transition"

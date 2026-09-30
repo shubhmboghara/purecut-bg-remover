@@ -9,6 +9,7 @@
  */
 
 import { getAiConfig } from './aiConfig.js';
+import { applyCleanStrayIslands, applyPurgeFloorShadows, applyColorDespill } from './smartMaskTools.js';
 
 /**
  * Returns raw transparent PNG Blob (used by batch queue & export)
@@ -16,6 +17,12 @@ import { getAiConfig } from './aiConfig.js';
 export async function removeBackgroundAIBlob(imageInput, onProgress) {
   const { blob: inputBlob, img: loadedImg } = await normalizeInputImage(imageInput);
   const config = getAiConfig();
+
+  const postProcessOpts = {
+    autoCleanIslands: config.autoCleanIslands,
+    autoCleanShadows: config.autoCleanShadows,
+    originalImg: loadedImg
+  };
 
   // Tier 0: Official Remove.bg Cloud API (if configured by user)
   if (config.engine === 'removebg' && config.removeBgApiKey) {
@@ -26,7 +33,7 @@ export async function removeBackgroundAIBlob(imageInput, onProgress) {
       // Apply optional post-processing color decontamination
       if (config.edgeDecontaminate) {
         if (onProgress) onProgress('Applying Color Decontamination & Edge Smoothing...', 90);
-        return await applyColorDecontaminationBlob(removeBgResult, config.edgeFeather);
+        return await applyColorDecontaminationBlob(removeBgResult, config.edgeFeather, postProcessOpts);
       }
       return removeBgResult;
     } catch (apiErr) {
@@ -45,7 +52,7 @@ export async function removeBackgroundAIBlob(imageInput, onProgress) {
     // Apply Remove.bg-style Color Decontamination
     if (config.edgeDecontaminate) {
       if (onProgress) onProgress('Applying Edge Defringing & Color Spill Removal...', 92);
-      resultBlob = await applyColorDecontaminationBlob(resultBlob, config.edgeFeather);
+      resultBlob = await applyColorDecontaminationBlob(resultBlob, config.edgeFeather, postProcessOpts);
     }
 
     return resultBlob;
@@ -57,7 +64,7 @@ export async function removeBackgroundAIBlob(imageInput, onProgress) {
       if (onProgress) onProgress('Switching to Optimized Quantized Neural Model...', 45);
       let resultBlob = await runImglyRemovalBlob(inputBlob, 'small', onProgress);
       if (config.edgeDecontaminate) {
-        resultBlob = await applyColorDecontaminationBlob(resultBlob, config.edgeFeather);
+        resultBlob = await applyColorDecontaminationBlob(resultBlob, config.edgeFeather, postProcessOpts);
       }
       return resultBlob;
     } catch (tier2Err) {
@@ -134,13 +141,22 @@ async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
   const { removeBackground } = await import('@imgly/background-removal');
   console.log('[BG DEBUG] Successfully imported removeBackground from @imgly/background-removal');
 
-  const publicPath = (typeof window !== 'undefined' && window.location)
+  const cdnPublicPath = 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/';
+  const localPublicPath = (typeof window !== 'undefined' && window.location)
     ? `${window.location.origin}/imgly/`
-    : 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/';
+    : cdnPublicPath;
+
+  // For 'small', use local publicPath (isnet_quint8 is bundled locally)
+  // For 'medium' (Studio HD FP16), staticimgly.com CDN delivers weights with zero CORS restrictions
+  const chosenPublicPath = (modelTier === 'small') ? localPublicPath : cdnPublicPath;
 
   const config = {
     model: modelTier,
-    publicPath,
+    publicPath: chosenPublicPath,
+    output: {
+      format: 'image/png',
+      quality: 1.0
+    },
     progress: (key, current, total) => {
       console.log('[IMGLY PROGRESS RAW]', key, current, total);
       if (onProgress) {
@@ -155,7 +171,23 @@ async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
     }
   };
 
-  const outputBlob = await removeBackground(blob, config);
+  let outputBlob;
+  try {
+    outputBlob = await removeBackground(blob, config);
+  } catch (err) {
+    if (modelTier !== 'small') {
+      console.warn(`[BG AI] Model tier '${modelTier}' encountered issue (${err.message}), falling back to local IS-Net quantized model.`);
+      if (onProgress) onProgress('Loading local neural weights...', 35);
+      const fallbackConfig = {
+        ...config,
+        model: 'small',
+        publicPath: localPublicPath
+      };
+      outputBlob = await removeBackground(blob, fallbackConfig);
+    } else {
+      throw err;
+    }
+  }
 
   if (onProgress) onProgress('Finalizing HD cutout...', 98);
   return outputBlob;
@@ -165,7 +197,7 @@ async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
  * Remove.bg-Style Color Decontamination & Edge Defringing
  * Neutralizes background color spill on semi-transparent edge pixels and hair strands.
  */
-export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1) {
+export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1, options = {}) {
   return new Promise((resolve) => {
     const img = new Image();
     const url = URL.createObjectURL(inputBlob);
@@ -182,6 +214,16 @@ export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1
         ctx.drawImage(img, 0, 0);
 
         decontaminateEdgePixels(ctx, w, h, featherRadius);
+
+        // Auto clean floating artifacts if enabled
+        if (options.autoCleanIslands) {
+          applyCleanStrayIslands(canvas, 0.012);
+        }
+
+        // Auto suppress floor shadows if enabled and original image available
+        if (options.autoCleanShadows && options.originalImg) {
+          applyPurgeFloorShadows(canvas, options.originalImg, 55);
+        }
 
         canvas.toBlob((blob) => {
           URL.revokeObjectURL(url);
@@ -209,6 +251,22 @@ export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1
 export function decontaminateEdgePixels(ctx, w, h, featherRadius = 1) {
   const imgData = ctx.getImageData(0, 0, w, h);
   const data = imgData.data;
+
+  // 0. Sub-threshold alpha clamp & Hermite contrast enhancement
+  // Eliminates faint background noise (alpha <= 12) and solidifies subject (alpha >= 238)
+  for (let i = 0; i < w * h; i++) {
+    const aIdx = i * 4 + 3;
+    const a = data[aIdx];
+    if (a <= 12) {
+      data[aIdx] = 0;
+    } else if (a >= 238) {
+      data[aIdx] = 255;
+    } else {
+      // Smoothstep curve for pristine hair strands and soft edges
+      const t = (a - 12) / (238 - 12);
+      data[aIdx] = Math.round(255 * (t * t * (3 - 2 * t)));
+    }
+  }
 
   // 1. First pass: Detect transition boundary pixels (alpha between 10 and 240)
   // and neutralize background color contamination using adjacent solid foreground

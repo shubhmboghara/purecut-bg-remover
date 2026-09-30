@@ -13,6 +13,7 @@ export default function ExportModal({
 }) {
   const [format, setFormat] = useState('png');
   const [quality, setQuality] = useState(95);
+  const [scaleMultiplier, setScaleMultiplier] = useState(1.0); // 1.0 (100% Native) or 2.0 (200% Ultra HD)
   const [copied, setCopied] = useState(false);
   const dialogRef = useRef(null);
   const previewCanvasRef = useRef(null);
@@ -52,7 +53,8 @@ export default function ExportModal({
       shadowCanvas,
       mainCanvas,
       format,
-      quality: quality / 100
+      quality: quality / 100,
+      scale: scaleMultiplier
     });
 
     const url = URL.createObjectURL(blob);
@@ -80,7 +82,8 @@ export default function ExportModal({
         shadowCanvas,
         mainCanvas,
         format: 'png',
-        quality: 1.0
+        quality: 1.0,
+        scale: scaleMultiplier
       });
 
       await navigator.clipboard.write([
@@ -198,14 +201,74 @@ export default function ExportModal({
             </div>
           )}
 
+          {/* Output Resolution & Resident Quality Selector */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                Output Resolution
+              </label>
+              <span className="text-[10px] font-bold text-accent-emerald flex items-center gap-1">
+                <Check className="w-3 h-3" />
+                100% Resident Guarantee
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setScaleMultiplier(1.0)}
+                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                  scaleMultiplier === 1.0
+                    ? 'border-brand-400 bg-brand-500/15 shadow-glow -translate-y-0.5'
+                    : 'border-studio-border bg-studio-850/60 hover:bg-studio-800'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span className="text-xs font-bold text-white">1x Native (100%)</span>
+                  {scaleMultiplier === 1.0 && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-500 text-white font-bold">
+                      Lossless
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-400 leading-tight">
+                  100% exact original photo resolution
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setScaleMultiplier(2.0)}
+                className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between ${
+                  scaleMultiplier === 2.0
+                    ? 'border-purple-400 bg-purple-500/15 shadow-glow-purple -translate-y-0.5'
+                    : 'border-studio-border bg-studio-850/60 hover:bg-studio-800'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1">
+                  <span className="text-xs font-bold text-white">2x Ultra-HD (200%)</span>
+                  {scaleMultiplier === 2.0 && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500 text-white font-bold">
+                      Super-Res
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-400 leading-tight">
+                  Crisp 4K/8K super-sampled for large prints
+                </span>
+              </button>
+            </div>
+          </div>
+
           {/* Technical Export Metadata */}
           <div className="p-3 bg-studio-950/70 rounded-2xl border border-studio-border flex justify-between items-center text-xs shadow-inner">
             <span className="text-slate-400 flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5 text-brand-400" />
-              Full Resolution Output:
+              100% Resident Output:
             </span>
             <span className="font-bold text-white font-mono">
-              {mainCanvas ? `${mainCanvas.width} × ${mainCanvas.height} px` : 'Auto'}
+              {mainCanvas
+                ? `${Math.round(mainCanvas.width * scaleMultiplier)} × ${Math.round(mainCanvas.height * scaleMultiplier)} px • ${(((mainCanvas.width * scaleMultiplier) * (mainCanvas.height * scaleMultiplier)) / 1000000).toFixed(1)} MP`
+                : 'Auto'}
             </span>
           </div>
         </div>

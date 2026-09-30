@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Interactive3DCard from './Interactive3DCard';
 import SpatialLayerDemo from './SpatialLayerDemo';
+import ThreeHeroScene from './ThreeHeroScene';
 
 const SAMPLES = [
   {
@@ -40,6 +41,7 @@ const SAMPLES = [
 
 export default function UploadStage({ onSelectImage, onSelectBatch }) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [hero3DTab, setHero3DTab] = useState('three');
   const singleFileInputRef = useRef(null);
   const batchFileInputRef = useRef(null);
   const folderInputRef = useRef(null);
@@ -215,9 +217,51 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
             </Interactive3DCard>
           </div>
 
-          {/* Column 2: 3D Spatial Layer Separation Showcase (5 Cols on desktop) */}
-          <div className="lg:col-span-5 flex justify-center w-full">
-            <SpatialLayerDemo />
+          {/* Column 2: Real-Time Three.js WebGL Core & Spatial Exploder */}
+          <div className="lg:col-span-5 flex flex-col justify-center w-full">
+            <div className="w-full flex items-center justify-between mb-3 px-1">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span className="text-xs font-bold text-slate-300 font-display">Interactive 3D Engine</span>
+              </div>
+              <div className="flex rounded-xl bg-studio-950 p-1 border border-studio-border shadow-inner">
+                <button
+                  onClick={() => setHero3DTab('three')}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                    hero3DTab === 'three'
+                      ? 'bg-brand-500 text-white shadow-glow'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Three.js WebGL
+                </button>
+                <button
+                  onClick={() => setHero3DTab('layers')}
+                  className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
+                    hero3DTab === 'layers'
+                      ? 'bg-brand-500 text-white shadow-glow'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Spatial Exploder
+                </button>
+              </div>
+            </div>
+
+            {hero3DTab === 'three' ? (
+              <div className="w-full h-80 rounded-3xl pedestal-3d bg-studio-900/90 border border-studio-borderHighlight overflow-hidden relative group shadow-2xl">
+                <ThreeHeroScene />
+                <div className="absolute bottom-3 inset-x-3 px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md border border-white/10 flex items-center justify-between pointer-events-none text-[11px]">
+                  <span className="text-slate-300 font-mono flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                    Three.js WebGL
+                  </span>
+                  <span className="text-brand-300 font-semibold">Click & drag to spin 3D core</span>
+                </div>
+              </div>
+            ) : (
+              <SpatialLayerDemo />
+            )}
           </div>
         </div>
 

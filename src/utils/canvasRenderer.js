@@ -189,23 +189,31 @@ function hexToRgb(hex) {
   };
 }
 
-export function generateExportBlob({ bgCanvas, shadowCanvas, mainCanvas, format, quality }) {
+export function generateExportBlob({ bgCanvas, shadowCanvas, mainCanvas, format, quality, scale = 1.0 }) {
   return new Promise((resolve) => {
+    const s = Math.max(0.5, Math.min(4.0, scale || 1.0));
+    const targetW = Math.round(mainCanvas.width * s);
+    const targetH = Math.round(mainCanvas.height * s);
+
     const exportCanvas = document.createElement('canvas');
-    exportCanvas.width = mainCanvas.width;
-    exportCanvas.height = mainCanvas.height;
+    exportCanvas.width = targetW;
+    exportCanvas.height = targetH;
     const ctx = exportCanvas.getContext('2d');
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     if (format === 'jpeg') {
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      ctx.fillRect(0, 0, targetW, targetH);
     }
 
-    ctx.drawImage(bgCanvas, 0, 0);
-    ctx.drawImage(shadowCanvas, 0, 0);
-    ctx.drawImage(mainCanvas, 0, 0);
+    if (bgCanvas) ctx.drawImage(bgCanvas, 0, 0, targetW, targetH);
+    if (shadowCanvas) ctx.drawImage(shadowCanvas, 0, 0, targetW, targetH);
+    ctx.drawImage(mainCanvas, 0, 0, targetW, targetH);
 
     const mime = format === 'jpeg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
-    exportCanvas.toBlob((blob) => resolve(blob), mime, quality);
+    const exportQuality = format === 'png' ? 1.0 : quality;
+    exportCanvas.toBlob((blob) => resolve(blob), mime, exportQuality);
   });
 }
