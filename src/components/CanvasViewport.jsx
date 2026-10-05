@@ -33,6 +33,8 @@ export default function CanvasViewport({
   processingPct
 }) {
   const [zoom, setZoom] = useState(1.0);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [compareActive, setCompareActive] = useState(false);
   const [threeSpatialActive, setThreeSpatialActive] = useState(false);
   const [inspectBackdrop, setInspectBackdrop] = useState('checkerboard'); // 'checkerboard' | 'white' | 'black' | 'green'
@@ -43,6 +45,10 @@ export default function CanvasViewport({
   const dragStart = useRef({ x: 0, y: 0, tx: 0, ty: 0 });
   const isPainting = useRef(false);
   const lastPaintPos = useRef(null);
+
+  // Viewport panning state (Space + Drag or Middle Mouse)
+  const isPanning = useRef(false);
+  const panStart = useRef({ x: 0, y: 0, px: 0, py: 0 });
 
   // Lasso state
   const isLassoing = useRef(false);
@@ -61,6 +67,7 @@ export default function CanvasViewport({
 
       const fitZoom = Math.min(availW / cw, availH / ch, 1.0);
       setZoom(fitZoom);
+      setPan({ x: 0, y: 0 });
     };
 
     handleFit();
@@ -68,9 +75,54 @@ export default function CanvasViewport({
     return () => window.removeEventListener('resize', handleFit);
   }, [canvasRefs.main, originalDims]);
 
+  // Spacebar pan listener
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
+      if (e.code === 'Space' && !e.repeat) {
+        e.preventDefault();
+        setIsSpacePressed(true);
+      }
+    };
+    const handleKeyUp = (e) => {
+      if (e.code === 'Space') {
+        setIsSpacePressed(false);
+        isPanning.current = false;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
+
+  // Smooth mouse wheel zoom
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+      setZoom((z) => Math.max(0.15, Math.min(4.0, Number((z * zoomFactor).toFixed(3)))));
+    };
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, []);
+
   // Pointer interactions
   const handlePointerDown = (e) => {
     if (!canvasRefs.main.current) return;
+
+    // Viewport pan via Spacebar or Middle Mouse click
+    if (e.button === 1 || isSpacePressed) {
+      e.preventDefault();
+      isPanning.current = true;
+      panStart.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
+      return;
+    }
+
     const rect = canvasRefs.main.current.getBoundingClientRect();
     const scale = rect.width / canvasRefs.main.current.width;
     const canvasX = (e.clientX - rect.left) / scale;
@@ -102,6 +154,7 @@ export default function CanvasViewport({
       };
     }
   };
+
 
   useEffect(() => {
     const handlePointerMove = (e) => {
@@ -168,6 +221,14 @@ export default function CanvasViewport({
         }
       }
 
+      if (isPanning.current) {
+        setPan({
+          x: panStart.current.px + (e.clientX - panStart.current.x),
+          y: panStart.current.py + (e.clientY - panStart.current.y)
+        });
+        return;
+      }
+
       if (isPainting.current) {
         if (lastPaintPos.current) {
           const dx = canvasX - lastPaintPos.current.x;
@@ -205,11 +266,15 @@ export default function CanvasViewport({
     };
 
     const handlePointerUp = () => {
+      if (isPanning.current) {
+        isPanning.current = false;
+      }
       if (isPainting.current) {
         isPainting.current = false;
         lastPaintPos.current = null;
         onPushHistory();
       }
+
       if (isLassoing.current) {
         isLassoing.current = false;
         if (lassoPoints.current.length >= 3 && onLassoCut) {
@@ -363,10 +428,12 @@ export default function CanvasViewport({
         ref={wrapperRef}
         onMouseDown={handlePointerDown}
         style={{
-          transform: `scale(${zoom})`,
-          cursor: activeTab === 'retouch' 
-            ? (activeTool === 'wand' || activeTool === 'lasso' ? 'crosshair' : 'crosshair') 
-            : 'grab'
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          cursor: isSpacePressed 
+            ? (isPanning.current ? 'grabbing' : 'grab')
+            : (activeTab === 'retouch' 
+              ? (activeTool === 'wand' || activeTool === 'lasso' ? 'crosshair' : 'crosshair') 
+              : 'grab')
         }}
         className={`relative rounded-3xl overflow-hidden transition-all duration-150 origin-center border-2 border-white/10 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] ${
           inspectBackdrop === 'white'
@@ -435,6 +502,7 @@ export default function CanvasViewport({
               const cw = canvasRefs.main.current.width || 800;
               const ch = canvasRefs.main.current.height || 600;
               setZoom(Math.min((c.clientWidth - 80) / cw, (c.clientHeight - 80) / ch, 1.0));
+              setPan({ x: 0, y: 0 });
             }}
             className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/8 transition ml-0.5 keycap-3d"
             title="Fit to Screen"
@@ -443,7 +511,10 @@ export default function CanvasViewport({
             <Maximize className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setZoom(1.0)}
+            onClick={() => {
+              setZoom(1.0);
+              setPan({ x: 0, y: 0 });
+            }}
             className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition ml-0.5 keycap-3d ${
               Math.abs(zoom - 1.0) < 0.05
                 ? 'text-white shadow-glow'
@@ -463,6 +534,7 @@ export default function CanvasViewport({
             100%
           </button>
         </div>
+
 
         <div className="w-px h-5 bg-white/10"></div>
 

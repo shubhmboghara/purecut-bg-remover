@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { UploadCloud } from 'lucide-react';
 import Navbar from './components/Navbar';
+
 import Sidebar from './components/Sidebar';
 import UploadStage from './components/UploadStage';
 import CanvasViewport from './components/CanvasViewport';
@@ -310,6 +312,94 @@ export default function App() {
     }
   }, [handleSelectImage]);
 
+  // Global Window Drag-and-Drop state
+  const [isWindowDragOver, setIsWindowDragOver] = useState(false);
+
+  const dragCounter = useRef(0);
+
+  // Global Clipboard Image Paste (Ctrl+V / Cmd+V)
+  useEffect(() => {
+    const handlePaste = (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(e.target?.tagName)) return;
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type && item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) {
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              handleSelectImage(evt.target.result);
+              showToast('✨ Loaded photo from clipboard!');
+            };
+            reader.readAsDataURL(file);
+            break;
+          }
+        }
+      }
+    };
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [showToast]);
+
+  // Global Window Drag & Drop Protection & Upload
+  useEffect(() => {
+    const handleDragEnter = (e) => {
+      e.preventDefault();
+      dragCounter.current += 1;
+      if (e.dataTransfer?.types?.includes('Files')) {
+        setIsWindowDragOver(true);
+      }
+    };
+
+    const handleDragOver = (e) => {
+      e.preventDefault();
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'copy';
+      }
+    };
+
+    const handleDragLeave = (e) => {
+      e.preventDefault();
+      dragCounter.current = Math.max(0, dragCounter.current - 1);
+      if (dragCounter.current === 0) {
+        setIsWindowDragOver(false);
+      }
+    };
+
+    const handleDrop = (e) => {
+      e.preventDefault();
+      dragCounter.current = 0;
+      setIsWindowDragOver(false);
+
+      const files = Array.from(e.dataTransfer?.files || []).filter((f) =>
+        f.type && f.type.startsWith('image/')
+      );
+      if (files.length === 0) return;
+
+      if (files.length === 1) {
+        const reader = new FileReader();
+        reader.onload = (evt) => handleSelectImage(evt.target.result);
+        reader.readAsDataURL(files[0]);
+      } else {
+        handleSelectBatch(files);
+      }
+    };
+
+    window.addEventListener('dragenter', handleDragEnter);
+    window.addEventListener('dragover', handleDragOver);
+    window.addEventListener('dragleave', handleDragLeave);
+    window.addEventListener('drop', handleDrop);
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragEnter);
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('dragleave', handleDragLeave);
+      window.removeEventListener('drop', handleDrop);
+    };
+  }, []);
+
   // Batch processing handlers
   const handleSelectBatch = (files) => {
     const newItems = files.map((file, idx) => createBatchItem(file, idx));
@@ -317,6 +407,7 @@ export default function App() {
     setAppMode('batch');
     showToast(`Queued ${newItems.length} images for batch processing!`);
   };
+
 
   const handleAddBatchFiles = (newFiles) => {
     const newItems = newFiles.map((file, idx) =>
@@ -926,7 +1017,32 @@ export default function App() {
           </button>
         </div>
       )}
+
+      {/* Global Drag-and-Drop Protective Overlay */}
+      {isWindowDragOver && (
+        <div 
+          className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center p-8 backdrop-blur-md"
+          style={{
+            background: 'color-mix(in oklch, oklch(0.09 0.025 260) 85%, transparent)',
+            border: '3px dashed oklch(0.65 0.28 278)'
+          }}
+        >
+          <div 
+            className="flex flex-col items-center gap-3 p-8 rounded-3xl bg-studio-900/95 border border-white/20 shadow-2xl text-center"
+            style={{
+              boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.9), 0 0 50px -15px oklch(0.65 0.28 278 / 0.5)'
+            }}
+          >
+            <div className="w-16 h-16 rounded-2xl bg-brand-500/20 text-brand-300 flex items-center justify-center animate-bounce border border-brand-500/40">
+              <UploadCloud className="w-8 h-8" />
+            </div>
+            <h3 className="text-xl font-bold font-display text-white">Drop Photo Here</h3>
+            <p className="text-xs text-slate-300 max-w-xs">Release mouse to instantly load and segment in PureCut AI</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 

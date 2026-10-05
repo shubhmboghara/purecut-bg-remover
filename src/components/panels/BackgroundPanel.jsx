@@ -73,7 +73,11 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
       </div>
 
       {/* Category Tabs */}
-      <div className="grid grid-cols-3 gap-1.5 p-1 bg-studio-950/80 rounded-2xl border border-studio-border shadow-inner">
+      <div 
+        role="tablist"
+        aria-label="Background styles"
+        className="grid grid-cols-3 gap-1.5 p-1 bg-studio-950/80 rounded-2xl border border-studio-border shadow-inner"
+      >
         {[
           { id: 'transparent', label: 'Transparent' },
           { id: 'color', label: 'Solid' },
@@ -84,6 +88,8 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
         ].map((cat) => (
           <button
             key={cat.id}
+            role="tab"
+            aria-selected={background.type === cat.id}
             onClick={() => onChangeBackground({ ...background, type: cat.id })}
             className={`py-2 px-2 rounded-xl text-xs font-semibold transition-all duration-150 text-center ${
               background.type === cat.id
@@ -95,6 +101,7 @@ export default function BackgroundPanel({ background, onChangeBackground }) {
           </button>
         ))}
       </div>
+
 
       {/* Transparent View */}
       {background.type === 'transparent' && (

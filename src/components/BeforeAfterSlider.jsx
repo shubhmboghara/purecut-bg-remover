@@ -50,10 +50,32 @@ export default function BeforeAfterSlider({ originalSrc, isActive }) {
 
       {/* Draggable Divider Handle */}
       <div
+        role="slider"
+        tabIndex={0}
+        aria-label="Before and after comparison divider"
+        aria-valuenow={Math.round(splitPos)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        onKeyDown={(e) => {
+          const step = e.shiftKey ? 10 : 2;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSplitPos((p) => Math.max(0, p - step));
+          } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSplitPos((p) => Math.min(100, p + step));
+          } else if (e.key === 'Home') {
+            e.preventDefault();
+            setSplitPos(0);
+          } else if (e.key === 'End') {
+            e.preventDefault();
+            setSplitPos(100);
+          }
+        }}
         onMouseDown={handlePointerDown}
         onTouchStart={handlePointerDown}
         style={{ left: `${splitPos}%` }}
-        className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-brand-400 via-white to-brand-400 cursor-ew-resize pointer-events-auto shadow-[0_0_14px_rgba(59,130,246,0.9)] flex items-center justify-center -translate-x-1/2"
+        className="absolute top-0 bottom-0 w-1 bg-gradient-to-b from-brand-400 via-white to-brand-400 cursor-ew-resize pointer-events-auto shadow-[0_0_14px_rgba(59,130,246,0.9)] flex items-center justify-center -translate-x-1/2 focus-visible:outline-2 focus-visible:outline-brand-400 focus-visible:outline-offset-4"
       >
         {/* Floating before / after dimensional badges */}
         <div className="absolute top-5 -translate-x-12 px-2.5 py-1 rounded-full bg-slate-950/85 backdrop-blur-md border border-white/20 text-[10px] font-extrabold tracking-wider text-slate-200 shadow-[0_4px_10px_rgba(0,0,0,0.6)] pointer-events-none select-none">
@@ -71,3 +93,4 @@ export default function BeforeAfterSlider({ originalSrc, isActive }) {
     </div>
   );
 }
+

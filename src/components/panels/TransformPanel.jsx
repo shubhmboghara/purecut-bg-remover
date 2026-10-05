@@ -5,8 +5,10 @@ import {
   FlipVertical, 
   Crosshair, 
   Move,
-  RotateCw
+  RotateCw,
+  RotateCcw
 } from 'lucide-react';
+
 
 export default function TransformPanel({
   transform,
@@ -95,8 +97,17 @@ export default function TransformPanel({
             <FlipVertical className="w-4 h-4 text-accent-purple" />
             <span>Flip Vertical</span>
           </button>
+
+          <button
+            onClick={() => onChangeTransform({ x: 0, y: 0, scale: 1.0, rotation: 0, flipH: 1, flipV: 1 })}
+            className="col-span-2 flex items-center justify-center gap-2 py-2.5 px-3 rounded-2xl bg-studio-950 hover:bg-studio-850 text-xs font-bold text-slate-300 hover:text-white border border-studio-border transition keycap-3d mt-1"
+          >
+            <RotateCcw className="w-4 h-4 text-brand-400" />
+            <span>Reset Position & Rotation</span>
+          </button>
         </div>
       </div>
+
 
       {/* Drag Tip */}
       <div className="p-4 rounded-2xl bg-studio-950/70 border border-studio-border text-xs text-slate-400 flex items-center gap-3">
