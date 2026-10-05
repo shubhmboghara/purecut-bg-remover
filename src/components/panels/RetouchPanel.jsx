@@ -53,13 +53,19 @@ export default function RetouchPanel({
 
       {/* 4 Tool Selectors */}
       <div>
-        <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
+        <label id="retouch-tool-group-label" className="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">
           Select Retouch Tool
         </label>
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-studio-950 rounded-2xl border border-studio-border shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]">
+        <div 
+          role="radiogroup" 
+          aria-labelledby="retouch-tool-group-label"
+          className="grid grid-cols-2 gap-2 p-1.5 bg-studio-950 rounded-2xl border border-studio-border shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
+        >
           {/* Magic Wand */}
           <button
             type="button"
+            role="radio"
+            aria-checked={activeTool === 'wand'}
             onClick={() => onChangeTool('wand')}
             className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'wand'
@@ -74,6 +80,8 @@ export default function RetouchPanel({
           {/* Lasso Cutout */}
           <button
             type="button"
+            role="radio"
+            aria-checked={activeTool === 'lasso'}
             onClick={() => onChangeTool('lasso')}
             className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'lasso'
@@ -88,6 +96,8 @@ export default function RetouchPanel({
           {/* Erase Brush */}
           <button
             type="button"
+            role="radio"
+            aria-checked={activeTool === 'erase'}
             onClick={() => onChangeTool('erase')}
             className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'erase'
@@ -102,6 +112,8 @@ export default function RetouchPanel({
           {/* Restore Brush */}
           <button
             type="button"
+            role="radio"
+            aria-checked={activeTool === 'restore'}
             onClick={() => onChangeTool('restore')}
             className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition keycap-3d ${
               activeTool === 'restore'
@@ -114,6 +126,7 @@ export default function RetouchPanel({
           </button>
         </div>
       </div>
+
 
       {/* Active Tool Specific Settings */}
       {activeTool === 'wand' && (

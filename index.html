@@ -3,13 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PureCut AI Studio - React & Tailwind Photo Editor</title>
-    <meta name="description" content="Production-ready Vite + React + Tailwind CSS AI Background Remover and Creative Studio Editor. 100% Free, Private, and In-Browser." />
-    
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <!-- Fix: Declare dark color-scheme so browser chrome matches the UI immediately -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0d0d14" />
+    <title>PureCut AI Studio — AI Background Remover</title>
+    <meta name="description" content="Professional AI background remover. Sub-pixel edge matting, 3D shadows, batch processing. 100% free, private, and in-browser." />
+
+    <!-- Preconnect for fastest font delivery -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+
+    <!--
+      Fix: Inter now loads weights 300–900 (font-black = 900 is used throughout via Tailwind).
+      Fix: Plus Jakarta Sans now loads 600–900 for display headlines.
+      Previously only 300–700 was loaded, so the browser was synthesizing (faking) bold weight = blurry text.
+    -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-studio-950 text-slate-100 antialiased selection:bg-brand-500 selection:text-white overflow-hidden">
     <div id="root"></div>

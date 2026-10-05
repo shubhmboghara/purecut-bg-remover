@@ -99,6 +99,7 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
   return (
     <dialog
       ref={dialogRef}
+      aria-modal="true"
       onCancel={(e) => {
         e.preventDefault();
         onClose();

@@ -403,7 +403,7 @@ export default function App() {
     setHistoryIndex((prev) => prev + 1);
   }, [transform, historyIndex]);
 
-  const handleUndo = () => {
+  const handleUndo = useCallback(() => {
     if (historyIndex > 0) {
       const newIdx = historyIndex - 1;
       const snap = history[newIdx];
@@ -415,9 +415,9 @@ export default function App() {
         renderAll();
       }
     }
-  };
+  }, [historyIndex, history, renderAll]);
 
-  const handleRedo = () => {
+  const handleRedo = useCallback(() => {
     if (historyIndex < history.length - 1) {
       const newIdx = historyIndex + 1;
       const snap = history[newIdx];
@@ -429,7 +429,8 @@ export default function App() {
         renderAll();
       }
     }
-  };
+  }, [historyIndex, history, renderAll]);
+
 
   // Coordinate transform from viewport canvas to subject local space
   const canvasToSubjectLocal = useCallback((canvasX, canvasY) => {
@@ -665,6 +666,11 @@ export default function App() {
   }, [pushHistory, renderAll, showToast]);
 
   // Keyboard Shortcuts (Ctrl+Z, Ctrl+Y, Ctrl+E, 1-6, [, ])
+  const shortcutsRef = useRef({ handleUndo, handleRedo, originalSrc });
+  useEffect(() => {
+    shortcutsRef.current = { handleUndo, handleRedo, originalSrc };
+  });
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Don't intercept if user is typing in an input
@@ -672,12 +678,12 @@ export default function App() {
 
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault();
-        handleUndo();
+        shortcutsRef.current.handleUndo();
       } else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
         e.preventDefault();
-        handleRedo();
+        shortcutsRef.current.handleRedo();
       } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
-        if (originalSrc) {
+        if (shortcutsRef.current.originalSrc) {
           e.preventDefault();
           setIsExportOpen(true);
         }
@@ -699,10 +705,16 @@ export default function App() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, []);
+
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-studio-950 text-slate-100 overflow-hidden font-sans">
+    <div className="w-screen h-dvh flex flex-col bg-studio-950 text-slate-100 overflow-hidden font-sans">
+      {/* Skip Navigation Link — WCAG 2.4.1: keyboard users can bypass navbar */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
       {/* Top Navbar */}
       <Navbar
         canUndo={historyIndex > 0}
@@ -741,7 +753,7 @@ export default function App() {
       />
 
       {/* Main Workspace Body */}
-      <main className="flex-1 flex overflow-hidden relative">
+      <main id="main-content" className="flex-1 flex overflow-hidden relative">
         {appMode === 'batch' ? (
           <BatchStudio
             batchItems={batchItems}
@@ -888,7 +900,8 @@ export default function App() {
         <div 
           role="status"
           aria-live="polite"
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl backdrop-blur-2xl text-white flex items-center gap-3 text-xs font-semibold shadow-2xl animate-float"
+          aria-atomic="true"
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-2xl backdrop-blur-2xl text-white flex items-center gap-3 text-xs font-semibold shadow-2xl toast-notification select-text"
           style={{
             background: 'color-mix(in oklch, oklch(0.09 0.025 260) 94%, transparent)',
             border: '1px solid color-mix(in oklch, white 14%, transparent)',
@@ -896,17 +909,18 @@ export default function App() {
           }}
         >
           <span 
-            className={`w-2.5 h-2.5 rounded-full ${
+            className={`w-2.5 h-2.5 rounded-full shrink-0 ${
               toast.isError 
                 ? 'bg-rose-500 shadow-[0_0_10px_#f43f5e]' 
                 : 'bg-emerald-400 shadow-[0_0_10px_#34d399]'
             }`}
+            aria-hidden="true"
           ></span>
           <span className="text-slate-100">{toast.message}</span>
           <button
             onClick={() => setToast({ visible: false, message: '', isError: false })}
-            className="ml-2 text-slate-400 hover:text-white transition"
-            aria-label="Dismiss message"
+            className="ml-2 w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition shrink-0"
+            aria-label="Dismiss notification"
           >
             ✕
           </button>
@@ -915,3 +929,4 @@ export default function App() {
     </div>
   );
 }
+

@@ -203,7 +203,7 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                   >
                     Select Photo
                   </button>
-                  <input ref={singleFileInputRef} type="file" accept="image/*" className="hidden" onChange={handleSingleFileChange} />
+                  <input ref={singleFileInputRef} type="file" accept="image/*" aria-label="Upload single image" className="hidden" onChange={handleSingleFileChange} />
 
                   <button
                     onClick={() => batchFileInputRef.current?.click()}
@@ -216,7 +216,7 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                     <Layers className="w-4 h-4 text-brand-400" />
                     <span>Batch 1,000+ Files</span>
                   </button>
-                  <input ref={batchFileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleBatchFileChange} />
+                  <input ref={batchFileInputRef} type="file" accept="image/*" multiple aria-label="Upload batch images" className="hidden" onChange={handleBatchFileChange} />
                 </div>
 
                 <button
@@ -226,7 +226,7 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                   <FolderPlus className="w-4 h-4 text-accent-purple" />
                   <span>Or select an entire folder</span>
                 </button>
-                <input ref={folderInputRef} type="file" webkitdirectory="true" multiple className="hidden" onChange={handleBatchFileChange} />
+                <input ref={folderInputRef} type="file" webkitdirectory="true" multiple aria-label="Upload entire image folder" className="hidden" onChange={handleBatchFileChange} />
               </div>
             </Interactive3DCard>
           </div>
@@ -239,6 +239,8 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                 <span className="text-xs font-bold text-slate-300 font-display">Interactive 3D Engine</span>
               </div>
               <div
+                role="tablist"
+                aria-label="3D engine view selection"
                 className="flex rounded-xl p-1"
                 style={{
                   background: 'oklch(0.07 0.02 260)',
@@ -247,6 +249,8 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                 }}
               >
                 <button
+                  role="tab"
+                  aria-selected={hero3DTab === 'three'}
                   onClick={() => setHero3DTab('three')}
                   className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
                     hero3DTab === 'three' ? 'text-white' : 'text-slate-500 hover:text-slate-300'
@@ -256,6 +260,8 @@ export default function UploadStage({ onSelectImage, onSelectBatch }) {
                   Three.js WebGL
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={hero3DTab === 'layers'}
                   onClick={() => setHero3DTab('layers')}
                   className={`px-3 py-1 rounded-lg text-[11px] font-bold transition ${
                     hero3DTab === 'layers' ? 'text-white' : 'text-slate-500 hover:text-slate-300'

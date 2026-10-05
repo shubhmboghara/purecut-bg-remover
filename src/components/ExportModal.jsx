@@ -102,6 +102,7 @@ export default function ExportModal({
   return (
     <dialog
       ref={dialogRef}
+      aria-modal="true"
       onCancel={(e) => {
         e.preventDefault();
         onClose();

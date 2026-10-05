@@ -118,21 +118,20 @@ export default function Navbar({
               <button
                 onClick={onUndo}
                 disabled={!canUndo}
-                aria-label="Undo"
+                aria-label="Undo last change (Ctrl+Z)"
                 title="Undo (Ctrl+Z)"
-                className="p-1.5 rounded-lg text-slate-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
-                style={{':hover': {background: 'rgba(255,255,255,0.07)'}}}
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 active:bg-white/15 disabled:opacity-20 disabled:pointer-events-none transition focus-visible:outline-2 focus-visible:outline-brand-400"
               >
-                <RotateCcw style={{width:'14px', height:'14px'}} />
+                <RotateCcw style={{width:'15px', height:'15px'}} />
               </button>
               <button
                 onClick={onRedo}
                 disabled={!canRedo}
-                aria-label="Redo"
+                aria-label="Redo next change (Ctrl+Y)"
                 title="Redo (Ctrl+Y)"
-                className="p-1.5 rounded-lg text-slate-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition"
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 active:bg-white/15 disabled:opacity-20 disabled:pointer-events-none transition focus-visible:outline-2 focus-visible:outline-brand-400"
               >
-                <RotateCw style={{width:'14px', height:'14px'}} />
+                <RotateCw style={{width:'15px', height:'15px'}} />
               </button>
             </div>
 
