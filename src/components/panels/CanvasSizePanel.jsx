@@ -24,13 +24,19 @@ export default function CanvasSizePanel({ aspectRatio, onSelectRatio, originalDi
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div 
+        role="radiogroup"
+        aria-label="Canvas aspect ratios"
+        className="grid grid-cols-2 gap-3"
+      >
         {RATIOS.map((r) => {
           const Icon = r.icon;
           const isActive = aspectRatio === r.id;
           return (
             <button
               key={r.id}
+              role="radio"
+              aria-checked={isActive}
               onClick={() => onSelectRatio(r.id)}
               className={`p-4 rounded-2xl border flex flex-col items-center justify-center gap-1.5 text-center transition-all duration-150 transform ${
                 isActive
@@ -41,6 +47,7 @@ export default function CanvasSizePanel({ aspectRatio, onSelectRatio, originalDi
               <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-0.5 transition-colors ${
                 isActive ? 'bg-brand-500/30 text-brand-300' : 'bg-studio-900 text-slate-400'
               }`}>
+
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs font-bold">{r.title}</span>

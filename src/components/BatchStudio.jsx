@@ -972,22 +972,33 @@ export default function BatchStudio({
 
       {/* Multi-Part ZIP Volume Exporter Modal for 500+ Images */}
       {isVolumeModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="max-w-xl w-full bg-studio-900 border border-studio-border rounded-3xl p-6 shadow-2xl flex flex-col max-h-[85vh]">
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="zip-volumes-title"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setIsVolumeModalOpen(false)}
+        >
+          <div 
+            className="max-w-xl w-full bg-studio-900 border border-studio-border rounded-3xl p-6 shadow-2xl flex flex-col max-h-[85vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-studio-border">
               <div className="flex items-center gap-2">
                 <FileArchive className="w-5 h-5 text-brand-400" />
-                <h3 className="font-bold text-base text-white">
+                <h3 id="zip-volumes-title" className="font-bold text-base text-white">
                   Multi-Part ZIP Volumes ({stats.completed.toLocaleString()} Cutouts)
                 </h3>
               </div>
               <button
                 onClick={() => setIsVolumeModalOpen(false)}
-                className="text-slate-400 hover:text-white font-bold p-1"
+                aria-label="Close volumes dialog"
+                className="text-slate-400 hover:text-white font-bold p-1 rounded-lg hover:bg-white/10 transition"
               >
                 ✕
               </button>
             </div>
+
 
             <p className="text-xs text-slate-400 my-3">
               To prevent browser crashes and memory limits on thousands of files, cutouts are partitioned into safe 500-image packages. Download any volume below:
@@ -1291,6 +1302,7 @@ function InspectModal({ item, backgroundMode, customBgColor, onClose, onOpenStud
   return (
     <dialog
       ref={dialogRef}
+      aria-modal="true"
       onCancel={(e) => {
         e.preventDefault();
         onClose();
@@ -1303,6 +1315,7 @@ function InspectModal({ item, backgroundMode, customBgColor, onClose, onOpenStud
       aria-labelledby="inspect-modal-title"
       className="p-4 bg-transparent outline-none"
     >
+
       <div 
         className="max-w-4xl w-full bg-studio-900/95 backdrop-blur-2xl border border-studio-borderHighlight rounded-3xl overflow-hidden shadow-studio flex flex-col max-h-[90vh] select-none"
         onClick={(e) => e.stopPropagation()}

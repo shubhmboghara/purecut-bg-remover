@@ -25,12 +25,14 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
         <label className="relative inline-flex items-center cursor-pointer">
           <input
             type="checkbox"
+            aria-label="Enable drop shadow"
             checked={shadow.enabled}
             onChange={(e) => onChangeShadow({ ...shadow, enabled: e.target.checked })}
             className="sr-only peer"
           />
           <div className="w-10 h-5 bg-studio-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-500 shadow-inner"></div>
         </label>
+
       </div>
 
       <div className={`flex flex-col gap-4 transition-all duration-200 ${shadow.enabled ? 'opacity-100' : 'opacity-35 pointer-events-none'}`}>
@@ -173,10 +175,12 @@ export default function ShadowPanel({ shadow, onChangeShadow }) {
           <div className="flex items-center gap-3 p-2 bg-studio-900 rounded-xl border border-studio-border">
             <input
               type="color"
+              aria-label="Shadow color tint"
               value={shadow.color || '#000000'}
               onChange={(e) => onChangeShadow({ ...shadow, color: e.target.value })}
               className="w-7 h-7 rounded-lg cursor-pointer bg-transparent border-0"
             />
+
             <span className="font-mono text-xs text-white uppercase font-bold tracking-wider">
               {shadow.color || '#000000'}
             </span>
