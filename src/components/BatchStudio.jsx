@@ -101,6 +101,19 @@ export default function BatchStudio({
     refreshStorageStats();
   }, [refreshStorageStats]);
 
+  // Keyboard Escape listener for Multi-Part Volume Modal
+  useEffect(() => {
+    if (!isVolumeModalOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsVolumeModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVolumeModalOpen]);
+
+
   // Sync worker settings when any control changes
   useEffect(() => {
     if (workerRef.current) {

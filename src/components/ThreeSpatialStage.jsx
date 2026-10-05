@@ -262,6 +262,19 @@ export default function ThreeSpatialStage({
     }
   };
 
+  // Keyboard Escape listener to exit 3D stage
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && onClose) {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+
   return (
     <div className="relative w-full h-full min-h-[450px] bg-studio-950 overflow-hidden flex flex-col select-none">
       {/* Three.js Canvas Container */}
