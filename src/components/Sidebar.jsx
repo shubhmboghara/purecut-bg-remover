@@ -1,5 +1,5 @@
-import React from 'react';
 import { 
+  Home,
   Image as ImageIcon, 
   Wand2, 
   Move, 
@@ -18,7 +18,8 @@ const TABS = [
   { id: 'canvas', label: 'Canvas', shortcut: '6', icon: Crop }
 ];
 
-export default function Sidebar({ activeTab, onSelectTab }) {
+export default function Sidebar({ activeTab, onSelectTab, onGoHome }) {
+
   const handleTabClick = (tabId) => {
     if (tabId === activeTab) return;
     transitionView(() => {
@@ -87,6 +88,24 @@ export default function Sidebar({ activeTab, onSelectTab }) {
           </button>
         );
       })}
+
+      {/* Return to Home Showcase */}
+      <div className="mt-auto pt-2 border-t border-white/8 w-full flex justify-center">
+        <button
+          onClick={onGoHome}
+          title="Return to Home Showcase (Upload, 3D Demo, Samples)"
+          aria-label="Return to home page"
+          className="w-[66px] h-[54px] rounded-2xl flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-white font-medium hover:bg-white/5 transition-all keycap-3d"
+          style={{
+            background: 'oklch(0.09 0.025 260 / 0.7)',
+            border: '1px solid color-mix(in oklch, white 8%, transparent)'
+          }}
+        >
+          <Home className="w-4 h-4 text-brand-400" />
+          <span className="text-[10px] font-bold">Home</span>
+        </button>
+      </div>
     </aside>
   );
 }
+

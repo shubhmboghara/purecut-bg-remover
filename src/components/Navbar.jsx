@@ -1,5 +1,5 @@
-import React from 'react';
 import { 
+  Home,
   Wand2, 
   RotateCcw, 
   RotateCw, 
@@ -24,6 +24,7 @@ export default function Navbar({
   onReset,
   onNewImage,
   onExport,
+  onGoHome,
   hasImage,
   appMode = 'single',
   onSwitchMode,
@@ -32,6 +33,7 @@ export default function Navbar({
   aiConfig,
   onOpenAiEngine
 }) {
+
   const handleModeSwitch = (mode) => {
     if (mode === appMode) return;
     transitionView(() => {
@@ -41,9 +43,14 @@ export default function Navbar({
 
   return (
     <header className="navbar-glass h-[60px] px-4 md:px-6 flex items-center justify-between z-40 select-none sticky top-0">
-      {/* Left: Premium Brand */}
-      <div className="flex items-center gap-3">
-        <div className="animated-border-wrap w-9 h-9 rounded-xl relative cursor-pointer group" role="img" aria-label="PureCut logo">
+      {/* Left: Premium Brand / Home Link */}
+      <button
+        onClick={onGoHome}
+        title="Return to Home Showcase"
+        aria-label="PureCut AI Studio - Return to home page"
+        className="flex items-center gap-3 text-left group focus-visible:outline-2 focus-visible:outline-brand-400 rounded-2xl p-1 -m-1 transition active:scale-98"
+      >
+        <div className="animated-border-wrap w-9 h-9 rounded-xl relative cursor-pointer group-hover:scale-105 transition-transform" role="img" aria-label="PureCut logo">
           <div className="absolute inset-0 rounded-xl" style={{padding: '1.5px', background: 'conic-gradient(from 0deg, oklch(0.65 0.28 278), oklch(0.72 0.28 308), oklch(0.82 0.18 195), oklch(0.65 0.28 278))', animation: 'rotate-border 5s linear infinite'}}></div>
           <div className="relative w-full h-full rounded-xl flex items-center justify-center" style={{background: 'oklch(0.09 0.025 260)'}}>
             <Box style={{width:'18px', height:'18px', color: 'oklch(0.80 0.16 275)'}} />
@@ -53,7 +60,7 @@ export default function Navbar({
         
         <div className="flex flex-col leading-none gap-0.5">
           <div className="flex items-center gap-2">
-            <h1 className="font-display font-black text-sm md:text-[15px] tracking-tight text-white">
+            <h1 className="font-display font-black text-sm md:text-[15px] tracking-tight text-white group-hover:text-brand-300 transition">
               PureCut
             </h1>
             <span className="hidden sm:inline-flex items-center gap-1 text-[9px] tracking-widest uppercase px-2 py-0.5 rounded-full font-extrabold" style={{background: 'linear-gradient(135deg, oklch(0.65 0.28 278 / 0.18), oklch(0.72 0.28 308 / 0.18))', border: '1px solid oklch(0.65 0.28 278 / 0.35)', color: 'oklch(0.80 0.16 275)'}}>
@@ -63,7 +70,8 @@ export default function Navbar({
           </div>
           <p className="text-[10px] text-slate-500 hidden md:block font-medium">Spatial AI Photo Engine</p>
         </div>
-      </div>
+      </button>
+
 
       {/* Center: Recessed Mode Pill */}
       <div 
@@ -158,6 +166,22 @@ export default function Navbar({
 
             {hasImage && (
               <button
+                onClick={onGoHome}
+                title="Return to Home Showcase (Upload, 3D Demo, Samples)"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all duration-200"
+                style={{
+                  background: 'oklch(0.13 0.03 260)',
+                  border: '1px solid color-mix(in oklch, white 12%, transparent)',
+                  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 8px rgba(0,0,0,0.4)'
+                }}
+              >
+                <Home style={{width:'14px', height:'14px', color: 'oklch(0.80 0.16 275)'}} />
+                <span>Home</span>
+              </button>
+            )}
+
+            {hasImage && (
+              <button
                 onClick={onReset}
                 title="Reset adjustments"
                 className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-500 hover:text-white transition"
@@ -199,6 +223,20 @@ export default function Navbar({
         {appMode === 'batch' && (
           <div className="flex items-center gap-2">
             <button
+              onClick={onGoHome}
+              title="Return to Home Showcase (Upload, 3D Demo, Samples)"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white transition-all duration-200"
+              style={{
+                background: 'oklch(0.13 0.03 260)',
+                border: '1px solid color-mix(in oklch, white 12%, transparent)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07), 0 2px 8px rgba(0,0,0,0.4)'
+              }}
+            >
+              <Home style={{width:'14px', height:'14px', color: 'oklch(0.80 0.16 275)'}} />
+              <span>Home</span>
+            </button>
+
+            <button
               onClick={onOpenAiEngine}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-400 hover:text-white transition"
               title="Configure AI Engine"
@@ -228,6 +266,7 @@ export default function Navbar({
             </div>
           </div>
         )}
+
       </div>
     </header>
   );

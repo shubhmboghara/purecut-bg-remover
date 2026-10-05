@@ -18,8 +18,10 @@ import AdjustPanel from './components/panels/AdjustPanel';
 import CanvasSizePanel from './components/panels/CanvasSizePanel';
 
 // Services & Utilities
+import { transitionView } from './utils/viewTransition';
 import { removeBackgroundAI } from './services/backgroundRemoval';
 import { renderCompositeCanvas } from './utils/canvasRenderer';
+
 import { createBatchItem } from './services/batchProcessor';
 import { getAiConfig } from './services/aiConfig';
 import {
@@ -422,7 +424,18 @@ export default function App() {
     showToast('Batch queue cleared');
   };
 
+  // Return to Home Showcase (Landing Showcase Page)
+  const handleGoHome = useCallback(() => {
+    transitionView(() => {
+      setOriginalSrc(null);
+      setOriginalDims(null);
+      setAppMode('single');
+    });
+    showToast('Returned to Home Showcase');
+  }, [showToast]);
+
   const handleOpenInSingleStudio = (batchItem) => {
+
     if (!batchItem) return;
     const originalUrl = URL.createObjectURL(batchItem.file);
     setOriginalSrc(originalUrl);
@@ -812,6 +825,7 @@ export default function App() {
         canRedo={historyIndex < history.length - 1}
         onUndo={handleUndo}
         onRedo={handleRedo}
+        onGoHome={handleGoHome}
         onReset={() => {
           setTransform({ x: 0, y: 0, scale: 1.0, rotation: 0, flipH: 1, flipV: 1 });
           setFilters({ brightness: 100, contrast: 100, saturation: 100, warmth: 0 });
@@ -853,8 +867,10 @@ export default function App() {
             onAddFiles={handleAddBatchFiles}
             onOpenInSingleStudio={handleOpenInSingleStudio}
             onShowToast={showToast}
-            onBackToStudio={() => setAppMode('single')}
+            onBackToStudio={handleGoHome}
+            onGoHome={handleGoHome}
           />
+
         ) : !originalSrc ? (
           <UploadStage
             onSelectImage={handleSelectImage}
@@ -863,7 +879,12 @@ export default function App() {
         ) : (
           <>
             {/* Leftmost Tool Strip */}
-            <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} />
+            <Sidebar 
+              activeTab={activeTab} 
+              onSelectTab={setActiveTab} 
+              onGoHome={handleGoHome} 
+            />
+
 
             {/* Sub-Panel Controls with Container Queries and Glassmorphism */}
             <aside 

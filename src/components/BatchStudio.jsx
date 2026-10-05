@@ -26,6 +26,7 @@ import {
   Cpu,
   Database,
   FileArchive,
+  Home,
   X
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -44,8 +45,10 @@ export default function BatchStudio({
   onAddFiles,
   onOpenInSingleStudio,
   onShowToast,
-  onBackToStudio
+  onBackToStudio,
+  onGoHome
 }) {
+
   // Queue Running State
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -389,14 +392,25 @@ export default function BatchStudio({
       <div className="bg-studio-900 border-b border-studio-border p-4 md:px-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
           {/* Left: Title & Scaled description */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={onGoHome || onBackToStudio}
+              className="px-3 py-1.5 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-border text-slate-300 hover:text-white transition flex items-center gap-1.5 text-xs font-semibold keycap-3d"
+              title="Return to Home Showcase (Upload, 3D Demo, Samples)"
+              aria-label="Return to home showcase"
+            >
+              <Home className="w-3.5 h-3.5 text-brand-400" />
+              <span>Home</span>
+            </button>
             <button
               onClick={onBackToStudio}
-              className="p-2 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-border text-slate-300 transition"
+              className="p-1.5 rounded-xl bg-studio-800 hover:bg-studio-700 border border-studio-border text-slate-300 hover:text-white transition"
               title="Return to Single Studio"
+              aria-label="Return to single studio"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
+
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-500 shadow-[0_0_10px_#6366f1] animate-pulse"></span>
