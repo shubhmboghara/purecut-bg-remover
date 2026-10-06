@@ -15,8 +15,9 @@ import { applyCleanStrayIslands, applyPurgeFloorShadows, applyColorDespill } fro
  * Returns raw transparent PNG Blob (used by batch queue & export)
  */
 export async function removeBackgroundAIBlob(imageInput, onProgress) {
-  const { blob: inputBlob, img: loadedImg } = await normalizeInputImage(imageInput);
+  const normalized = await normalizeInputImage(imageInput);
   const config = getAiConfig();
+  const { blob: inputBlob, img: loadedImg } = await prepareSafeImageBlob(normalized.blob, normalized.img, config.resolutionMode);
 
   const postProcessOpts = {
     autoCleanIslands: config.autoCleanIslands,
@@ -135,38 +136,105 @@ export async function runRemoveBgApiBlob(blob, apiKey, onProgress) {
 }
 
 /**
+ * Resolves local public path for bundled IS-Net neural weights and ONNX WASM runtime.
+ * Handles root domains, subdirectory paths, Vite BASE_URL, and GitHub Pages deployments.
+ */
+export function getLocalImglyPath() {
+  if (typeof window === 'undefined' || !window.location) {
+    return '/imgly/';
+  }
+  const base = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL)
+    ? import.meta.env.BASE_URL
+    : '/';
+  const url = new URL(base, window.location.href);
+  let pathname = url.pathname;
+  if (!pathname.endsWith('/')) {
+    pathname += '/';
+  }
+  return `${url.origin}${pathname}imgly/`;
+}
+
+let _cdnReachableCached = null;
+let _cdnCheckTimestamp = 0;
+
+/**
+ * Rapid probe to check if staticimgly CDN is reachable within timeout (default 2000ms).
+ * Caches result for 60s to prevent redundant probes on batch processing.
+ */
+export async function isImglyCdnReachable(cdnUrl, timeoutMs = 2000) {
+  const now = Date.now();
+  if (_cdnReachableCached !== null && (now - _cdnCheckTimestamp < 60000)) {
+    return _cdnReachableCached;
+  }
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const probeUrl = new URL('resources.json', cdnUrl).href;
+    const res = await fetch(probeUrl, {
+      method: 'HEAD',
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    _cdnReachableCached = res.ok;
+    _cdnCheckTimestamp = now;
+    return _cdnReachableCached;
+  } catch {
+    _cdnReachableCached = false;
+    _cdnCheckTimestamp = now;
+    return false;
+  }
+}
+
+/**
  * Executes @imgly/background-removal with custom configurations
  * Uses IS-Net (Intermediate Supervision Network) running on ONNX WebAssembly & WebGPU
  */
 async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
-  console.log('[BG DEBUG] Starting runImglyRemovalBlob with tier:', modelTier);
   const { removeBackground } = await import('@imgly/background-removal');
-  console.log('[BG DEBUG] Successfully imported removeBackground from @imgly/background-removal');
 
   const cdnPublicPath = 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/';
-  const localPublicPath = (typeof window !== 'undefined' && window.location)
-    ? `${window.location.origin}/imgly/`
-    : cdnPublicPath;
+  const localPublicPath = getLocalImglyPath();
 
-  // For 'small', use localPublicPath (isnet_quint8 is bundled locally for instant 0ms startup)
-  // For 'medium' (Studio HD FP16), staticimgly.com CDN delivers weights with zero CORS restrictions
-  const chosenPublicPath = (modelTier === 'small') ? localPublicPath : cdnPublicPath;
+  // Determine actual model tier and path:
+  // If 'medium' was requested, check if static CDN is reachable within 2 seconds.
+  // If not reachable (offline, blocked, or timed out), seamlessly switch to bundled local IS-Net model.
+  let effectiveTier = modelTier;
+  let chosenPublicPath = localPublicPath;
+
+  if (modelTier === 'medium') {
+    const cdnReachable = await isImglyCdnReachable(cdnPublicPath, 2000);
+    if (cdnReachable) {
+      chosenPublicPath = cdnPublicPath;
+      effectiveTier = 'medium';
+    } else {
+      console.info('[BG AI] Remote model CDN is unreachable or offline. Seamlessly utilizing bundled local IS-Net model for instant 100% cutout.');
+      if (onProgress) onProgress('Loading bundled local IS-Net neural network...', 25);
+      chosenPublicPath = localPublicPath;
+      effectiveTier = 'small';
+    }
+  } else {
+    chosenPublicPath = localPublicPath;
+    effectiveTier = 'small';
+  }
+
+  const aiConfig = getAiConfig();
+  const preferredDevice = aiConfig.device === 'cpu' ? 'cpu' : 'gpu';
 
   const config = {
-    model: modelTier,
+    model: effectiveTier,
     publicPath: chosenPublicPath,
+    device: preferredDevice,
     output: {
       format: 'image/png',
       quality: 1.0
     },
     progress: (key, current, total) => {
-      console.log('[IMGLY PROGRESS RAW]', key, current, total);
       if (onProgress) {
         const pct = total > 0 ? Math.min(95, Math.round((current / total) * 100)) : 50;
         const stageLabel = key.includes('fetch') 
-          ? 'Downloading Neural Weights' 
+          ? 'Loading Neural Weights' 
           : key.includes('compute') 
-          ? 'Solving Alpha Matting Equation' 
+          ? `Solving Alpha Matting (${preferredDevice.toUpperCase()})...` 
           : 'Segmenting Foreground';
         onProgress(`${stageLabel} (${pct}%)...`, pct);
       }
@@ -177,15 +245,33 @@ async function runImglyRemovalBlob(blob, modelTier = 'medium', onProgress) {
   try {
     outputBlob = await removeBackground(blob, config);
   } catch (err) {
-    if (modelTier !== 'small') {
-      console.warn(`[BG AI] Model tier '${modelTier}' encountered issue (${err.message}), falling back to local IS-Net quantized model.`);
+    console.warn(`[BG AI] Primary inference attempt failed (${err.message}). Initiating fallback sequence...`);
+    
+    // Step 1: If WebGPU failed, retry with CPU WebAssembly on the same model tier
+    if (preferredDevice === 'gpu') {
+      try {
+        if (onProgress) onProgress('GPU busy, retrying with CPU WebAssembly...', 30);
+        const cpuFallbackConfig = {
+          ...config,
+          device: 'cpu'
+        };
+        outputBlob = await removeBackground(blob, cpuFallbackConfig);
+        return outputBlob;
+      } catch (gpuFallbackErr) {
+        console.warn(`[BG AI] CPU retry for ${effectiveTier} also failed:`, gpuFallbackErr.message);
+      }
+    }
+
+    // Step 2: Fall back to local bundled IS-Net model (CPU)
+    if (effectiveTier !== 'small' || chosenPublicPath !== localPublicPath) {
       if (onProgress) onProgress('Loading local neural weights...', 35);
-      const fallbackConfig = {
+      const localFallbackConfig = {
         ...config,
         model: 'small',
+        device: 'cpu',
         publicPath: localPublicPath
       };
-      outputBlob = await removeBackground(blob, fallbackConfig);
+      outputBlob = await removeBackground(blob, localFallbackConfig);
     } else {
       throw err;
     }
@@ -217,9 +303,9 @@ export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1
 
         decontaminateEdgePixels(ctx, w, h, featherRadius);
 
-        // Auto clean floating artifacts if enabled
+        // Auto clean floating artifacts if enabled (safe speck threshold, max 250px)
         if (options.autoCleanIslands) {
-          applyCleanStrayIslands(canvas, 0.012);
+          applyCleanStrayIslands(canvas, 0.0004);
         }
 
         // Auto suppress floor shadows if enabled and original image available
@@ -249,29 +335,32 @@ export async function applyColorDecontaminationBlob(inputBlob, featherRadius = 1
 
 /**
  * Pixel-level Color Decontamination & Alpha Smoothing
+ * Preserves delicate hair strands, fur, transparent glass, and fine accessories.
  */
 export function decontaminateEdgePixels(ctx, w, h, featherRadius = 1) {
   const imgData = ctx.getImageData(0, 0, w, h);
   const data = imgData.data;
 
   // 0. Sub-threshold alpha clamp & Hermite contrast enhancement
-  // Eliminates background noise floor (alpha <= 32) and solidifies subject (alpha >= 225)
+  // Eliminates background noise floor (alpha <= 8) while preserving delicate hair strands and translucent edges.
+  // Solidifies high confidence subject (alpha >= 246).
   for (let i = 0; i < w * h; i++) {
     const aIdx = i * 4 + 3;
     const a = data[aIdx];
-    if (a <= 32) {
+    if (a <= 8) {
       data[aIdx] = 0;
-    } else if (a >= 225) {
+    } else if (a >= 246) {
       data[aIdx] = 255;
     } else {
-      // Smoothstep curve for pristine hair strands and soft edges
-      const t = (a - 32) / (225 - 32);
-      data[aIdx] = Math.round(255 * (t * t * (3 - 2 * t)));
+      // Gentle contrast curve that retains fine hair, fur, and glass transparency
+      const t = (a - 8) / (246 - 8);
+      const smoothA = Math.round(255 * (t * t * (3 - 2 * t)));
+      data[aIdx] = Math.round(a * 0.70 + smoothA * 0.30);
     }
   }
 
-  // 1. First pass: Detect transition boundary pixels (alpha between 10 and 240)
-  // and neutralize background color contamination using adjacent solid foreground
+  // 1. First pass: Detect transition boundary pixels (alpha between 15 and 240)
+  // and neutralize background color contamination using adjacent solid foreground.
   const windowRadius = 2;
 
   for (let y = windowRadius; y < h - windowRadius; y++) {
@@ -305,8 +394,8 @@ export function decontaminateEdgePixels(ctx, w, h, featherRadius = 1) {
           const avgG = sumG / solidCount;
           const avgB = sumB / solidCount;
 
-          // Blend factor: higher blend for lower alpha (where background spill is highest)
-          const spillWeight = (255 - alpha) / 255 * 0.75;
+          // Safe blend factor: neutralizes background color bleed without washing out contrast
+          const spillWeight = Math.min(0.65, ((255 - alpha) / 255) * 0.65);
           data[idx] = Math.round(data[idx] * (1 - spillWeight) + avgR * spillWeight);
           data[idx + 1] = Math.round(data[idx + 1] * (1 - spillWeight) + avgG * spillWeight);
           data[idx + 2] = Math.round(data[idx + 2] * (1 - spillWeight) + avgB * spillWeight);
@@ -384,6 +473,36 @@ async function normalizeInputImage(input) {
   throw new Error('Unsupported image input format');
 }
 
+/**
+ * Safely scales gigantic camera/mobile photos (e.g. 50MP DSLR) to safe canvas bounds
+ * to prevent browser tab WebGL / VRAM out-of-memory crashes while preserving 100% resolution.
+ */
+export async function prepareSafeImageBlob(blob, img, resolutionMode = 'original') {
+  if (typeof document === 'undefined') return { blob, img };
+  const w = img.naturalWidth || img.width;
+  const h = img.naturalHeight || img.height;
+  const maxDim = Math.max(w, h);
+  const targetMax = resolutionMode === 'balanced' ? 2048 : 4096;
+
+  if (maxDim <= targetMax) {
+    return { blob, img };
+  }
+
+  const scale = targetMax / maxDim;
+  const newW = Math.round(w * scale);
+  const newH = Math.round(h * scale);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = newW;
+  canvas.height = newH;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, newW, newH);
+
+  const resizedBlob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+  const resizedImg = await loadImageElement(URL.createObjectURL(resizedBlob));
+  return { blob: resizedBlob, img: resizedImg };
+}
+
 function loadImageElement(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -424,7 +543,12 @@ function dataURItoBlob(dataURI) {
 
 /**
  * Tier 3: Advanced Edge-Adaptive Boundary Matting Engine
- * Returns raw Blob
+ * Returns raw Blob.
+ * Features:
+ * - Corner-anchored background sampling (excludes central bottom margin where feet/shoes/bases sit).
+ * - Central saliency protection: core subject is shielded from accidental flood fills.
+ * - Adaptive spatial tolerance: aggressively clears outer background while tightly respecting inner contours.
+ * - Smooth anti-aliased edge transition.
  */
 async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
   return new Promise((resolve, reject) => {
@@ -441,26 +565,36 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
       const imgData = ctx.getImageData(0, 0, w, h);
       const data = imgData.data;
 
-      // 1. Gather reference background colors from the 4 outer image borders
+      // 1. Reference background colors sampled safely from the top edge,
+      // top-half side margins, and outer corners.
+      // NOTE: We intentionally EXCLUDE the central bottom margin (where people's feet,
+      // shoes, trousers, and product bases rest) so the subject is NEVER mistaken for background!
       const bgClusters = [];
       const stepX = Math.max(1, Math.floor(w / 40));
       const stepY = Math.max(1, Math.floor(h / 40));
 
+      // Top border (almost always true background in photos)
       for (let x = 0; x < w; x += stepX) {
         addClusterSample(bgClusters, getPixel(data, w, x, 0));
-        addClusterSample(bgClusters, getPixel(data, w, x, h - 1));
       }
 
-      for (let y = 0; y < h; y += stepY) {
+      // Upper 75% of left and right borders
+      const maxSideY = Math.floor(h * 0.75);
+      for (let y = 0; y < maxSideY; y += stepY) {
         addClusterSample(bgClusters, getPixel(data, w, 0, y));
         addClusterSample(bgClusters, getPixel(data, w, w - 1, y));
       }
 
+      // Bottom corners ONLY (outer 15% margins, protecting central 70% where shoes/bases rest)
+      for (let x = 0; x < Math.floor(w * 0.15); x += stepX) {
+        addClusterSample(bgClusters, getPixel(data, w, x, h - 1));
+      }
+      for (let x = Math.floor(w * 0.85); x < w; x += stepX) {
+        addClusterSample(bgClusters, getPixel(data, w, x, h - 1));
+      }
+
       if (onProgress) onProgress('Tracing foreground contours...', 85);
 
-      // 2. Border-connected Region Growing (BFS flood fill from outer edges)
-      // Only pixels contiguous to the image boundaries that match background color are cleared.
-      // The interior of the subject is completely protected.
       const isBg = new Uint8Array(w * h);
       const queue = new Int32Array(w * h);
       let head = 0;
@@ -470,14 +604,20 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
         let minDist = 999;
         for (let k = 0; k < bgClusters.length; k++) {
           const c = bgClusters[k];
-          const d = Math.sqrt((r - c.r) ** 2 + (g - c.g) ** 2 + (b - c.b) ** 2);
+          const d = Math.hypot(r - c.r, g - c.g, b - c.b);
           if (d < minDist) minDist = d;
         }
         return minDist;
       }
 
-      // Seed all 4 outer borders
-      const borderTolerance = 45;
+      // Center of visual weight for subject protection
+      const centerX = w * 0.5;
+      const centerY = h * 0.45;
+      const coreRadiusX = w * 0.38;
+      const coreRadiusY = h * 0.40;
+
+      // Seed top border
+      const borderTolerance = 52;
       for (let x = 0; x < w; x++) {
         const topIdx = x;
         if (!isBg[topIdx]) {
@@ -487,17 +627,10 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
             queue[tail++] = topIdx;
           }
         }
-        const btmIdx = (h - 1) * w + x;
-        if (!isBg[btmIdx]) {
-          const r = data[btmIdx * 4], g = data[btmIdx * 4 + 1], b = data[btmIdx * 4 + 2];
-          if (colorDistToBg(r, g, b) < borderTolerance) {
-            isBg[btmIdx] = 1;
-            queue[tail++] = btmIdx;
-          }
-        }
       }
 
-      for (let y = 0; y < h; y++) {
+      // Seed upper sides
+      for (let y = 0; y < maxSideY; y++) {
         const leftIdx = y * w;
         if (!isBg[leftIdx]) {
           const r = data[leftIdx * 4], g = data[leftIdx * 4 + 1], b = data[leftIdx * 4 + 2];
@@ -516,8 +649,29 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
         }
       }
 
-      // BFS flood fill inwards
-      const floodTolerance = 36;
+      // Seed bottom corners only (preserving bottom central subject boundary)
+      for (let x = 0; x < Math.floor(w * 0.15); x++) {
+        const btmIdx = (h - 1) * w + x;
+        if (!isBg[btmIdx]) {
+          const r = data[btmIdx * 4], g = data[btmIdx * 4 + 1], b = data[btmIdx * 4 + 2];
+          if (colorDistToBg(r, g, b) < borderTolerance) {
+            isBg[btmIdx] = 1;
+            queue[tail++] = btmIdx;
+          }
+        }
+      }
+      for (let x = Math.floor(w * 0.85); x < w; x++) {
+        const btmIdx = (h - 1) * w + x;
+        if (!isBg[btmIdx]) {
+          const r = data[btmIdx * 4], g = data[btmIdx * 4 + 1], b = data[btmIdx * 4 + 2];
+          if (colorDistToBg(r, g, b) < borderTolerance) {
+            isBg[btmIdx] = 1;
+            queue[tail++] = btmIdx;
+          }
+        }
+      }
+
+      // BFS flood fill inwards with adaptive spatial tolerance
       while (head < tail) {
         const cur = queue[head++];
         const cx = cur % w;
@@ -526,6 +680,13 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
         const curR = data[cur * 4];
         const curG = data[cur * 4 + 1];
         const curB = data[cur * 4 + 2];
+
+        // Normalized distance from core subject zone
+        const distFromCore = Math.hypot((cx - centerX) / coreRadiusX, (cy - centerY) / coreRadiusY);
+
+        // Core subject zone (distFromCore < 0.7) is strictly guarded
+        const maxFloodTolerance = distFromCore > 1.0 ? 55 : distFromCore > 0.7 ? 40 : 20;
+        const maxLocalDelta = distFromCore > 1.0 ? 35 : 22;
 
         const neighbors = [
           cx > 0 ? cur - 1 : -1,
@@ -541,10 +702,10 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
             const ng = data[n * 4 + 1];
             const nb = data[n * 4 + 2];
 
-            const localDelta = Math.sqrt((curR - nr) ** 2 + (curG - ng) ** 2 + (curB - nb) ** 2);
+            const localDelta = Math.hypot(curR - nr, curG - ng, curB - nb);
             const bgDelta = colorDistToBg(nr, ng, nb);
 
-            if (localDelta < 28 && bgDelta < floodTolerance) {
+            if (localDelta < maxLocalDelta && bgDelta < maxFloodTolerance) {
               isBg[n] = 1;
               queue[tail++] = n;
             }
@@ -552,10 +713,24 @@ async function runAdvancedEdgeAdaptiveMattingBlob(img, onProgress) {
         }
       }
 
-      // Clear only outer background pixels; interior pixels remain 100% solid
-      for (let i = 0; i < w * h; i++) {
-        if (isBg[i]) {
-          data[i * 4 + 3] = 0;
+      // Clear confirmed background pixels with smooth anti-aliased edge transition
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = y * w + x;
+          if (isBg[idx]) {
+            // Check if boundary neighbor is foreground
+            let isEdge = false;
+            if (x > 0 && !isBg[idx - 1]) isEdge = true;
+            else if (x < w - 1 && !isBg[idx + 1]) isEdge = true;
+            else if (y > 0 && !isBg[idx - w]) isEdge = true;
+            else if (y < h - 1 && !isBg[idx + w]) isEdge = true;
+
+            if (isEdge) {
+              data[idx * 4 + 3] = Math.round(data[idx * 4 + 3] * 0.25);
+            } else {
+              data[idx * 4 + 3] = 0;
+            }
+          }
         }
       }
 

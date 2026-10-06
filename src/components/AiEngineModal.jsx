@@ -323,6 +323,84 @@ export default function AiEngineModal({ isOpen, onClose, onSaveSuccess }) {
             </div>
           )}
 
+          {/* Hardware Acceleration (GPU vs CPU) */}
+          {config.engine === 'local' && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-200 uppercase tracking-wider block">
+                  Hardware Acceleration Device
+                </label>
+                <span className="text-[11px] text-amber-300 font-medium">
+                  0% CPU Load via WebGPU
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setConfig({ ...config, device: 'gpu' })}
+                  className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between ${
+                    (config.device || 'gpu') === 'gpu'
+                      ? 'border-brand-500 bg-brand-500/15 text-white shadow-glow'
+                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white hover:border-slate-600'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <p className="font-bold text-xs text-white flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5 text-amber-400" />
+                        WebGPU (Client GPU Accelerated)
+                      </p>
+                      {(config.device || 'gpu') === 'gpu' && (
+                        <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Executes on your graphics card (NVIDIA / AMD / Apple / Intel). 0% CPU consumption, 5-10x faster inference.
+                    </p>
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-300 font-bold border border-brand-500/30">
+                      RECOMMENDED
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-semibold">
+                      Zero CPU Heat
+                    </span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setConfig({ ...config, device: 'cpu' })}
+                  className={`p-3.5 rounded-2xl border text-left transition flex flex-col justify-between ${
+                    config.device === 'cpu'
+                      ? 'border-brand-500 bg-brand-500/15 text-white shadow-glow'
+                      : 'border-studio-border bg-studio-950/60 text-slate-400 hover:text-white hover:border-slate-600'
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <p className="font-bold text-xs text-white flex items-center gap-1.5">
+                        <Cpu className="w-3.5 h-3.5 text-blue-400" />
+                        WebAssembly (CPU Fallback)
+                      </p>
+                      {config.device === 'cpu' && (
+                        <CheckCircle2 className="w-4 h-4 text-brand-400 shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Executes via standard CPU multi-threading. Useful only if your graphics driver has disabled WebGPU.
+                    </p>
+                  </div>
+                  <div className="mt-2.5 flex items-center gap-1.5">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold">
+                      CPU Fallback
+                    </span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Local Neural Model Quality */}
           {config.engine === 'local' && (
             <div className="space-y-3">

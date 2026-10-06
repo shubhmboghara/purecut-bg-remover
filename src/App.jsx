@@ -262,7 +262,7 @@ export default function App() {
         setHistoryIndex(0);
 
         setIsProcessing(false);
-        showToast('Background removed successfully!');
+        showToast('Background removed! Use "Cutout & Fix" tab to fine-tune edges or 1-Click Auto-Perfect.');
       } catch (err) {
         console.error('[AI Error]', err);
         setIsProcessing(false);

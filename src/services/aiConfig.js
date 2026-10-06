@@ -10,7 +10,9 @@ export const DEFAULT_AI_CONFIG = {
   // 'local' (In-Browser Neural IS-Net) or 'removebg' (Official Remove.bg Cloud API)
   engine: 'local',
   removeBgApiKey: '',
-  // Local model quality: 'medium' (Studio HD IS-Net) or 'small' (Fast Quantized)
+  // Hardware device: 'gpu' (WebGPU Hardware Acceleration - 0% CPU Load) or 'cpu' (WebAssembly CPU)
+  device: 'gpu',
+  // Local model quality: 'medium' (Studio HD IS-Net FP16) or 'small' (Fast Quantized)
   quality: 'medium',
   // Resolution preservation: 'original' (100% Native Unscaled) or 'balanced' (2048px max)
   resolutionMode: 'original',

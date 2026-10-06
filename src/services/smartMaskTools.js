@@ -290,8 +290,9 @@ export function applyPurgeFloorShadows(maskCanvas, originalImage, sensitivity = 
       const idx = (y * w + x) * 4;
       const alpha = data[idx + 3];
 
-      // Ground shadow penumbra is semi-transparent (< 245) or at the very base perimeter
-      if (alpha > 5 && (alpha < 245 || verticalProgress > 0.85)) {
+      // Ground shadow penumbra is semi-transparent (alpha <= 240) and dark/desaturated.
+      // Solid foreground pixels (alpha > 240) are strictly protected to prevent wiping black shoes, pants, tires, or furniture feet!
+      if (alpha > 5 && alpha <= 240) {
         const r = data[idx];
         const g = data[idx + 1];
         const b = data[idx + 2];
@@ -303,7 +304,7 @@ export function applyPurgeFloorShadows(maskCanvas, originalImage, sensitivity = 
         const isGroundShadow = luminance < maxBrightnessThreshold && colorSpread < 45;
 
         if (isGroundShadow) {
-          const suppressionFactor = Math.min(1.0, verticalProgress * (1.1 + sensitivity / 100));
+          const suppressionFactor = Math.min(0.95, verticalProgress * (0.85 + sensitivity / 120));
           data[idx + 3] = Math.max(0, Math.round(alpha * (1 - suppressionFactor)));
           clearedCount++;
         }
@@ -318,6 +319,7 @@ export function applyPurgeFloorShadows(maskCanvas, originalImage, sensitivity = 
 /**
  * 5. Stray Island & Background Speckle Cleaner
  * Finds isolated, disconnected background blobs outside the main subject and purges them.
+ * Safe design: never deletes disconnected real objects (shoes, bags, necklaces, pets).
  */
 export function applyCleanStrayIslands(maskCanvas, minAreaRatio = 0.005) {
   if (!maskCanvas) return false;
@@ -379,7 +381,9 @@ export function applyCleanStrayIslands(maskCanvas, minAreaRatio = 0.005) {
     if (componentSizes[i] > maxArea) maxArea = componentSizes[i];
   }
 
-  const minKeepArea = Math.max(25, maxArea * minAreaRatio);
+  // Capped at 250 pixels maximum so detached real objects (shoes, hands, jewelry, accessories, pets)
+  // are NEVER accidentally cleared, while genuine 1-50 pixel floating noise artifacts are cleanly purged!
+  const minKeepArea = Math.min(250, Math.max(12, Math.round(maxArea * minAreaRatio)));
   let clearedCount = 0;
 
   for (let i = 0; i < w * h; i++) {
@@ -588,7 +592,7 @@ export function apply100PercentAutoPerfect(maskCanvas, originalImage, options = 
   let changed = false;
 
   if (cleanIslands) {
-    const r1 = applyCleanStrayIslands(maskCanvas, 0.012);
+    const r1 = applyCleanStrayIslands(maskCanvas, 0.002);
     if (r1) changed = true;
   }
 

@@ -10,17 +10,27 @@ describe('AI Configuration & Persistence Engine', () => {
     assert.equal(config.engine, 'local');
     assert.equal(DEFAULT_AI_CONFIG.quality, 'medium', 'Default precision must be HD Full Precision (medium)');
     assert.equal(config.quality, 'medium', 'getAiConfig must return medium by default');
+    assert.equal(config.device, 'gpu', 'Default hardware device must be WebGPU acceleration (gpu)');
     assert.equal(config.edgeDecontaminate, true);
     assert.equal(config.edgeFeather, 1);
   });
 
-  it('updates configuration and preserves keys, allowing users to toggle quality', () => {
+  it('updates configuration and preserves keys, allowing users to toggle quality and device', () => {
     const updated = saveAiConfig({ engine: 'removebg', removeBgApiKey: 'test_key_123' });
     assert.equal(updated.engine, 'removebg');
     assert.equal(updated.removeBgApiKey, 'test_key_123');
     // Default properties should remain intact
     assert.equal(updated.quality, 'medium');
+    assert.equal(updated.device, 'gpu');
     assert.equal(updated.edgeDecontaminate, true);
+
+    // User can switch device to cpu if desired
+    const switchedToCpu = saveAiConfig({ device: 'cpu' });
+    assert.equal(switchedToCpu.device, 'cpu');
+
+    // User can switch back to gpu
+    const switchedToGpu = saveAiConfig({ device: 'gpu' });
+    assert.equal(switchedToGpu.device, 'gpu');
 
     // User can switch quality to small if desired
     const switchedToSmall = saveAiConfig({ quality: 'small' });
@@ -31,7 +41,7 @@ describe('AI Configuration & Persistence Engine', () => {
     assert.equal(switchedToMedium.quality, 'medium');
 
     // Reset back
-    saveAiConfig({ engine: 'local', removeBgApiKey: '', quality: 'medium' });
+    saveAiConfig({ engine: 'local', removeBgApiKey: '', quality: 'medium', device: 'gpu' });
   });
 });
 
